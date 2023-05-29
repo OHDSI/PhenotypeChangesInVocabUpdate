@@ -1,0 +1,8 @@
+output/*.sql
+.DS_Store
+.Rproj.user
+errorReport.txt
+errorReportSql.txt
+.RData
+.RHistory
+inst/doc
