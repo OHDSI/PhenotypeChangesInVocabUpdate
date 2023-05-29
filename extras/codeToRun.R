@@ -1,10 +1,15 @@
 ######################################
-## Synthea OMOP Builder code to run ##
+## PhenotypeChangesVocab code to run ##
 ######################################
 
-library("ETLSyntheaBuilder")
-library("SqlRender")
-library("DatabaseConnector")
+library (dplyr)
+library (openxlsx)
+library (readr)
+
+#library(stringr) not sure if it's used further
+
+install.packages("DatabaseConnector")
+
 
 connectionDetails <- DatabaseConnector::createConnectionDetails(
   dbms     = "your dbms",
