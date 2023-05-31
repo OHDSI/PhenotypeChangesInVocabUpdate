@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/reference/test_package.html#special-files
 
 library(testthat)
-library(ETLSyntheaBuilder)
+library(phenotypeChangeVocab)
 
-test_check("ETLSyntheaBuilder")
+test_check("phenotypeChangeVocab")

@@ -7,12 +7,9 @@ library (openxlsx)
 library (readr)
 library (tibble)
 
-#library(stringr) not sure if it's used further
-
-install.packages("DatabaseConnector")
-
-#used for several functions so it can be here, but not an argument
-
+#if packages are not installed, please install
+#install.packages("SqlRender")
+#install.packages("DatabaseConnector")
 
 # if security is enabled authorize use of the webapi
 ROhdsiWebApi::authorizeWebApi(
@@ -41,13 +38,13 @@ oldVocabSchema <-'cdm_truven_ccae_v2182'
 resultSchema <-'scratch_ddymshyt' #schema with achillesresults, different from resSchema in JnJ
 
 
-
 # Create statistics on the source codes
 sourceCodesCnt<- sourceCodesCount()
 
 #create the dataframe with cohort-conceptSet-NodeConcept-desc-incl
 Concepts_in_cohortSet<-getNodeConcepts(cohorts)
 
+#write results to the Excel file
 resultToExcel()
 
 #open the excel file

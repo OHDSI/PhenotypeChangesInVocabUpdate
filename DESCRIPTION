@@ -1,33 +1,24 @@
-Package: ETLSyntheaBuilder
+Package: phenotypeChangeVocab
 Type: Package
-Title: A Builder for Converting the Synthea Data to the OMOP CDM
+Title: Utility to compare cohorts run in different vocabulary versions
 Version: 1.0
-mDate: 2021-12-04
-Author: Anthony Molinaro [aut, cre],
-        Clair Blacketer [aut],
-        Frank DeFalco [aut]
-Maintainer: Anthony Molinaro <amolin19@its.jnj.com>
-Description: ETL and Builder to convert Synthea Data to the OMOP CDM.
-    Staring with csv files for an OMOP Vocabulary and csv files for Synthea,
-    this package creates database tables from these csv files and maps them
-    correctly to create a full functional OMOP CDM from Synthea.
-	As the CDM Vocabulary can be quite large, there is the option to copy
-	the vocabulary from another schema that already has it loaded.
-    This package assumes an RDBMS exists to which you have read/write access.
+mDate: 2023-06-01
+Author: Dmitry Dymshyts [aut],
+        Clair Blacketer [aut]
+Maintainer: Dmitry Dymshyts <ddymshyt@its.jnj.com>
+Description: It Compares source codes captured, hierarchy changes and domain changes; 
+			identifies Non-standard concepts used in concept set expressions
+			To do so you should have different vocabulary versions available in your DB 
 License: Apache License 2.0
 Imports:
     SqlRender,
-	data.table,
-	httr,
 	dplyr (>= 1.0.0),
 	readr (>= 2.1.0),
-	CommonDataModel,
-	DatabaseConnector
-Remotes:
-  OHDSI/CommonDataModel
+	DatabaseConnector,
+	ROhdsiWebApi
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 Suggests: 
     rmarkdown,
     knitr,
