@@ -1,0 +1,292 @@
+"","ConceptID","isExcluded","includeDescendants","conceptsetId","conceptsetName","cohortId"
+"1",42537906,FALSE,TRUE,0,"Abulia",12822
+"2",4168212,FALSE,TRUE,2,"Agitation",12822
+"3",4083293,FALSE,TRUE,3,"Allodynia",12822
+"4",436222,FALSE,TRUE,4,"Altered mental status",12822
+"5",439147,FALSE,TRUE,5,"Amnesia",12822
+"6",132342,FALSE,FALSE,6,"Apraxia (excluding stroke caused)",12822
+"7",40481424,FALSE,FALSE,8,"Decreased level of consciousness",12822
+"8",4164633,FALSE,TRUE,9,"Disturbance of consciousness (stupor, delirium, confusion, disorientation)",12822
+"9",376961,FALSE,FALSE,9,"Disturbance of consciousness (stupor, delirium, confusion, disorientation)",12822
+"10",4087469,FALSE,TRUE,9,"Disturbance of consciousness (stupor, delirium, confusion, disorientation)",12822
+"11",4303087,FALSE,TRUE,9,"Disturbance of consciousness (stupor, delirium, confusion, disorientation)",12822
+"12",4093833,FALSE,TRUE,9,"Disturbance of consciousness (stupor, delirium, confusion, disorientation)",12822
+"13",4229897,FALSE,TRUE,9,"Disturbance of consciousness (stupor, delirium, confusion, disorientation)",12822
+"14",373995,FALSE,FALSE,9,"Disturbance of consciousness (stupor, delirium, confusion, disorientation)",12822
+"15",4268911,FALSE,TRUE,9,"Disturbance of consciousness (stupor, delirium, confusion, disorientation)",12822
+"16",4196636,FALSE,FALSE,10,"Anarthria and dysarthria (unrelated to stroke)",12822
+"17",4098868,FALSE,TRUE,11,"Agraphia and dysgraphia",12822
+"18",4339222,FALSE,TRUE,11,"Agraphia and dysgraphia",12822
+"19",37110756,FALSE,TRUE,11,"Agraphia and dysgraphia",12822
+"20",440424,FALSE,FALSE,12,"Aphasia and dysphasia",12822
+"21",441594,FALSE,FALSE,12,"Aphasia and dysphasia",12822
+"22",443782,FALSE,TRUE,13,"Tremors",12822
+"23",4140090,FALSE,TRUE,14,"Parkinsonism, dystonia, extrapyramidal symptoms",12822
+"24",373747,FALSE,FALSE,14,"Parkinsonism, dystonia, extrapyramidal symptoms",12822
+"25",375800,FALSE,TRUE,14,"Parkinsonism, dystonia, extrapyramidal symptoms",12822
+"26",79908,FALSE,TRUE,15,"Muscle weakness",12822
+"27",4091559,FALSE,FALSE,16,"Facial palsy (incl. Bell's palsy)",12822
+"28",374923,FALSE,TRUE,16,"Facial palsy (incl. Bell's palsy)",12822
+"29",4002030,FALSE,TRUE,16,"Facial palsy (incl. Bell's palsy)",12822
+"30",42710044,FALSE,TRUE,16,"Facial palsy (incl. Bell's palsy)",12822
+"31",37204553,TRUE,FALSE,16,"Facial palsy (incl. Bell's palsy)",12822
+"32",433031,FALSE,TRUE,17,"Hallucinations (not caused by substance or dementia)",12822
+"33",372607,TRUE,TRUE,17,"Hallucinations (not caused by substance or dementia)",12822
+"34",4214950,TRUE,TRUE,17,"Hallucinations (not caused by substance or dementia)",12822
+"35",37109222,TRUE,TRUE,17,"Hallucinations (not caused by substance or dementia)",12822
+"36",4137955,TRUE,TRUE,17,"Hallucinations (not caused by substance or dementia)",12822
+"37",4155336,TRUE,TRUE,17,"Hallucinations (not caused by substance or dementia)",12822
+"38",4171175,TRUE,TRUE,17,"Hallucinations (not caused by substance or dementia)",12822
+"39",440987,TRUE,TRUE,17,"Hallucinations (not caused by substance or dementia)",12822
+"40",443432,FALSE,TRUE,18,"Cognitive and memory impairment (not age- or Alzheimer's-related)",12822
+"41",4009705,TRUE,TRUE,18,"Cognitive and memory impairment (not age- or Alzheimer's-related)",12822
+"42",44782432,TRUE,TRUE,18,"Cognitive and memory impairment (not age- or Alzheimer's-related)",12822
+"43",37117145,TRUE,TRUE,18,"Cognitive and memory impairment (not age- or Alzheimer's-related)",12822
+"44",36687122,TRUE,TRUE,18,"Cognitive and memory impairment (not age- or Alzheimer's-related)",12822
+"45",441130,FALSE,TRUE,19,"Meningeal irritation (meningismus)",12822
+"46",441553,FALSE,TRUE,21,"Myoclonus",12822
+"47",4152347,FALSE,TRUE,22,"Somnolence (drowsy)",12822
+"48",373764,FALSE,FALSE,24,"Encephalopathy (condition)",12822
+"49",4047763,FALSE,FALSE,24,"Encephalopathy (condition)",12822
+"50",376690,FALSE,TRUE,25,"[EPI_1072] Cerebral edema",12822
+"51",4048796,TRUE,TRUE,25,"[EPI_1072] Cerebral edema",12822
+"52",377091,FALSE,TRUE,26,"[EPI_1072] Seizure",12822
+"53",4168681,FALSE,FALSE,27,"Irritability and restlessness",12822
+"54",4168212,FALSE,FALSE,27,"Irritability and restlessness",12822
+"55",441848,FALSE,TRUE,28,"Cranial nerve disorder (excluding Bell's palsy and not related to infection or neoplasm)",12822
+"56",4131106,TRUE,TRUE,28,"Cranial nerve disorder (excluding Bell's palsy and not related to infection or neoplasm)",12822
+"57",434824,TRUE,TRUE,28,"Cranial nerve disorder (excluding Bell's palsy and not related to infection or neoplasm)",12822
+"58",4169073,TRUE,TRUE,28,"Cranial nerve disorder (excluding Bell's palsy and not related to infection or neoplasm)",12822
+"59",36715546,TRUE,TRUE,28,"Cranial nerve disorder (excluding Bell's palsy and not related to infection or neoplasm)",12822
+"60",437496,TRUE,TRUE,28,"Cranial nerve disorder (excluding Bell's palsy and not related to infection or neoplasm)",12822
+"61",138682,TRUE,TRUE,28,"Cranial nerve disorder (excluding Bell's palsy and not related to infection or neoplasm)",12822
+"62",374923,TRUE,TRUE,28,"Cranial nerve disorder (excluding Bell's palsy and not related to infection or neoplasm)",12822
+"63",436806,TRUE,TRUE,28,"Cranial nerve disorder (excluding Bell's palsy and not related to infection or neoplasm)",12822
+"64",438155,TRUE,TRUE,28,"Cranial nerve disorder (excluding Bell's palsy and not related to infection or neoplasm)",12822
+"65",381504,TRUE,TRUE,28,"Cranial nerve disorder (excluding Bell's palsy and not related to infection or neoplasm)",12822
+"66",4105005,TRUE,TRUE,28,"Cranial nerve disorder (excluding Bell's palsy and not related to infection or neoplasm)",12822
+"67",44783224,FALSE,TRUE,29,"Focal motor weakness",12822
+"68",4065756,FALSE,TRUE,29,"Focal motor weakness",12822
+"69",40481389,TRUE,TRUE,29,"Focal motor weakness",12822
+"70",44782427,TRUE,TRUE,29,"Focal motor weakness",12822
+"71",4195475,FALSE,TRUE,30,"Bradykinesia (incl akinesia and hypokinesia)",12822
+"72",4143471,FALSE,TRUE,30,"Bradykinesia (incl akinesia and hypokinesia)",12822
+"73",437584,FALSE,TRUE,31,"Ataxia (incl cerebellar ataxia, non-hereditary)",12822
+"74",43531622,TRUE,TRUE,31,"Ataxia (incl cerebellar ataxia, non-hereditary)",12822
+"75",4225990,TRUE,TRUE,31,"Ataxia (incl cerebellar ataxia, non-hereditary)",12822
+"76",4263879,TRUE,TRUE,31,"Ataxia (incl cerebellar ataxia, non-hereditary)",12822
+"77",35622229,TRUE,TRUE,31,"Ataxia (incl cerebellar ataxia, non-hereditary)",12822
+"78",4133223,TRUE,TRUE,31,"Ataxia (incl cerebellar ataxia, non-hereditary)",12822
+"79",4050941,FALSE,TRUE,32,"Muscle rigidity (incl. cogwheel rigidity)",12822
+"80",4319906,FALSE,TRUE,33,"Dyskinesia",12822
+"81",35622040,TRUE,TRUE,33,"Dyskinesia",12822
+"82",4319462,TRUE,TRUE,33,"Dyskinesia",12822
+"83",375525,TRUE,TRUE,33,"Dyskinesia",12822
+"84",711584,FALSE,TRUE,34,"Assure Exposure - C -  levetiracetam",12822
+"85",734275,FALSE,TRUE,35,"Phenobarbital",12822
+"86",4181917,FALSE,TRUE,36,"Electroencephalogram (EEG)",12822
+"87",45889201,FALSE,TRUE,36,"Electroencephalogram (EEG)",12822
+"88",709744,FALSE,TRUE,38,"Lumbar or spinal puncture (diagnostic)",12822
+"89",4080549,FALSE,TRUE,38,"Lumbar or spinal puncture (diagnostic)",12822
+"90",739856,FALSE,TRUE,41,"CAR-T and T-cell therapy drugs",12822
+"91",792737,FALSE,TRUE,41,"CAR-T and T-cell therapy drugs",12822
+"92",37002369,FALSE,TRUE,41,"CAR-T and T-cell therapy drugs",12822
+"93",792844,FALSE,TRUE,41,"CAR-T and T-cell therapy drugs",12822
+"94",779144,FALSE,TRUE,41,"CAR-T and T-cell therapy drugs",12822
+"95",36026868,FALSE,TRUE,41,"CAR-T and T-cell therapy drugs",12822
+"96",45892531,FALSE,TRUE,41,"CAR-T and T-cell therapy drugs",12822
+"97",741578,FALSE,TRUE,41,"CAR-T and T-cell therapy drugs",12822
+"98",927062,FALSE,TRUE,42,"[EPI_1072] CAR-T and T-cell therapy procedures",12822
+"99",927060,FALSE,TRUE,42,"[EPI_1072] CAR-T and T-cell therapy procedures",12822
+"100",927061,FALSE,TRUE,42,"[EPI_1072] CAR-T and T-cell therapy procedures",12822
+"101",927059,FALSE,TRUE,42,"[EPI_1072] CAR-T and T-cell therapy procedures",12822
+"102",1532662,FALSE,TRUE,42,"[EPI_1072] CAR-T and T-cell therapy procedures",12822
+"103",1534922,FALSE,TRUE,42,"[EPI_1072] CAR-T and T-cell therapy procedures",12822
+"104",42639424,FALSE,TRUE,42,"[EPI_1072] CAR-T and T-cell therapy procedures",12822
+"105",42639752,FALSE,TRUE,42,"[EPI_1072] CAR-T and T-cell therapy procedures",12822
+"106",42639263,FALSE,TRUE,42,"[EPI_1072] CAR-T and T-cell therapy procedures",12822
+"107",42639217,FALSE,TRUE,42,"[EPI_1072] CAR-T and T-cell therapy procedures",12822
+"108",440424,FALSE,FALSE,12,"Aphasia and dysphasia",12824
+"109",441594,FALSE,FALSE,12,"Aphasia and dysphasia",12824
+"110",373764,FALSE,FALSE,24,"Encephalopathy (condition)",12824
+"111",4047763,FALSE,FALSE,24,"Encephalopathy (condition)",12824
+"112",376690,FALSE,TRUE,25,"[EPI_1072] Cerebral edema",12824
+"113",4048796,TRUE,TRUE,25,"[EPI_1072] Cerebral edema",12824
+"114",377091,FALSE,TRUE,26,"[EPI_1072] Seizure",12824
+"115",4024301,FALSE,FALSE,30,"ICANS (SNOMED)",12824
+"116",373995,FALSE,FALSE,31,"Encephalopathy (cognitive and global manifestations)",12824
+"117",4024716,FALSE,FALSE,31,"Encephalopathy (cognitive and global manifestations)",12824
+"118",4021783,FALSE,FALSE,31,"Encephalopathy (cognitive and global manifestations)",12824
+"119",435642,FALSE,FALSE,31,"Encephalopathy (cognitive and global manifestations)",12824
+"120",4268911,FALSE,TRUE,31,"Encephalopathy (cognitive and global manifestations)",12824
+"121",4196636,FALSE,FALSE,31,"Encephalopathy (cognitive and global manifestations)",12824
+"122",4254485,FALSE,TRUE,31,"Encephalopathy (cognitive and global manifestations)",12824
+"123",4046804,FALSE,FALSE,31,"Encephalopathy (cognitive and global manifestations)",12824
+"124",4297400,FALSE,TRUE,31,"Encephalopathy (cognitive and global manifestations)",12824
+"125",40480615,FALSE,FALSE,31,"Encephalopathy (cognitive and global manifestations)",12824
+"126",44782790,FALSE,FALSE,31,"Encephalopathy (cognitive and global manifestations)",12824
+"127",441594,FALSE,FALSE,31,"Encephalopathy (cognitive and global manifestations)",12824
+"128",4125590,FALSE,FALSE,31,"Encephalopathy (cognitive and global manifestations)",12824
+"129",443432,FALSE,TRUE,31,"Encephalopathy (cognitive and global manifestations)",12824
+"130",4102670,FALSE,FALSE,31,"Encephalopathy (cognitive and global manifestations)",12824
+"131",40481424,FALSE,FALSE,31,"Encephalopathy (cognitive and global manifestations)",12824
+"132",4164633,FALSE,TRUE,31,"Encephalopathy (cognitive and global manifestations)",12824
+"133",440424,FALSE,FALSE,31,"Encephalopathy (cognitive and global manifestations)",12824
+"134",4152347,FALSE,TRUE,31,"Encephalopathy (cognitive and global manifestations)",12824
+"135",4239756,FALSE,FALSE,31,"Encephalopathy (cognitive and global manifestations)",12824
+"136",4047110,FALSE,TRUE,31,"Encephalopathy (cognitive and global manifestations)",12824
+"137",380375,FALSE,FALSE,31,"Encephalopathy (cognitive and global manifestations)",12824
+"138",4293175,FALSE,FALSE,31,"Encephalopathy (cognitive and global manifestations)",12824
+"139",42537140,FALSE,TRUE,31,"Encephalopathy (cognitive and global manifestations)",12824
+"140",4168681,FALSE,TRUE,31,"Encephalopathy (cognitive and global manifestations)",12824
+"141",4009705,TRUE,TRUE,31,"Encephalopathy (cognitive and global manifestations)",12824
+"142",4273391,FALSE,TRUE,31,"Encephalopathy (cognitive and global manifestations)",12824
+"143",4339222,FALSE,TRUE,31,"Encephalopathy (cognitive and global manifestations)",12824
+"144",4208098,FALSE,TRUE,31,"Encephalopathy (cognitive and global manifestations)",12824
+"145",132342,FALSE,FALSE,32,"Encephalopathy (muscular manifestations)",12824
+"146",4143471,FALSE,FALSE,32,"Encephalopathy (muscular manifestations)",12824
+"147",44783224,FALSE,FALSE,32,"Encephalopathy (muscular manifestations)",12824
+"148",4219643,FALSE,TRUE,32,"Encephalopathy (muscular manifestations)",12824
+"149",140821,FALSE,FALSE,32,"Encephalopathy (muscular manifestations)",12824
+"150",441417,FALSE,TRUE,32,"Encephalopathy (muscular manifestations)",12824
+"151",443563,TRUE,TRUE,32,"Encephalopathy (muscular manifestations)",12824
+"152",4114624,FALSE,TRUE,32,"Encephalopathy (muscular manifestations)",12824
+"153",437584,FALSE,FALSE,32,"Encephalopathy (muscular manifestations)",12824
+"154",4311727,FALSE,TRUE,32,"Encephalopathy (muscular manifestations)",12824
+"155",441553,FALSE,TRUE,32,"Encephalopathy (muscular manifestations)",12824
+"156",711584,FALSE,TRUE,33,"REWARD Levetiracetam",12824
+"157",734275,FALSE,TRUE,34,"Phenobarbital",12824
+"158",4181917,FALSE,TRUE,35,"Electroencephalogram (EEG)",12824
+"159",45889201,FALSE,TRUE,35,"Electroencephalogram (EEG)",12824
+"160",709744,FALSE,TRUE,36,"Lumbar or spinal puncture (diagnostic)",12824
+"161",4080549,FALSE,TRUE,36,"Lumbar or spinal puncture (diagnostic)",12824
+"162",739856,FALSE,TRUE,39,"CAR-T and T-cell therapy drugs",12824
+"163",792737,FALSE,TRUE,39,"CAR-T and T-cell therapy drugs",12824
+"164",37002369,FALSE,TRUE,39,"CAR-T and T-cell therapy drugs",12824
+"165",792844,FALSE,TRUE,39,"CAR-T and T-cell therapy drugs",12824
+"166",779144,FALSE,TRUE,39,"CAR-T and T-cell therapy drugs",12824
+"167",36026868,FALSE,TRUE,39,"CAR-T and T-cell therapy drugs",12824
+"168",45892531,FALSE,TRUE,39,"CAR-T and T-cell therapy drugs",12824
+"169",741578,FALSE,TRUE,39,"CAR-T and T-cell therapy drugs",12824
+"170",927062,FALSE,TRUE,40,"[EPI_1072] CAR-T and T-cell therapy procedures",12824
+"171",927060,FALSE,TRUE,40,"[EPI_1072] CAR-T and T-cell therapy procedures",12824
+"172",927061,FALSE,TRUE,40,"[EPI_1072] CAR-T and T-cell therapy procedures",12824
+"173",927059,FALSE,TRUE,40,"[EPI_1072] CAR-T and T-cell therapy procedures",12824
+"174",1532662,FALSE,TRUE,40,"[EPI_1072] CAR-T and T-cell therapy procedures",12824
+"175",1534922,FALSE,TRUE,40,"[EPI_1072] CAR-T and T-cell therapy procedures",12824
+"176",42639424,FALSE,TRUE,40,"[EPI_1072] CAR-T and T-cell therapy procedures",12824
+"177",42639752,FALSE,TRUE,40,"[EPI_1072] CAR-T and T-cell therapy procedures",12824
+"178",42639263,FALSE,TRUE,40,"[EPI_1072] CAR-T and T-cell therapy procedures",12824
+"179",42639217,FALSE,TRUE,40,"[EPI_1072] CAR-T and T-cell therapy procedures",12824
+"180",42537906,FALSE,TRUE,0,"Abulia",12825
+"181",4168212,FALSE,TRUE,2,"Agitation",12825
+"182",4083293,FALSE,TRUE,3,"Allodynia",12825
+"183",436222,FALSE,TRUE,4,"Altered mental status",12825
+"184",439147,FALSE,TRUE,5,"Amnesia",12825
+"185",132342,FALSE,FALSE,6,"Apraxia (excluding stroke caused)",12825
+"186",40481424,FALSE,FALSE,8,"Decreased level of consciousness",12825
+"187",4164633,FALSE,TRUE,9,"Disturbance of consciousness (stupor, delirium, confusion, disorientation)",12825
+"188",376961,FALSE,FALSE,9,"Disturbance of consciousness (stupor, delirium, confusion, disorientation)",12825
+"189",4087469,FALSE,TRUE,9,"Disturbance of consciousness (stupor, delirium, confusion, disorientation)",12825
+"190",4303087,FALSE,TRUE,9,"Disturbance of consciousness (stupor, delirium, confusion, disorientation)",12825
+"191",4093833,FALSE,TRUE,9,"Disturbance of consciousness (stupor, delirium, confusion, disorientation)",12825
+"192",4229897,FALSE,TRUE,9,"Disturbance of consciousness (stupor, delirium, confusion, disorientation)",12825
+"193",373995,FALSE,FALSE,9,"Disturbance of consciousness (stupor, delirium, confusion, disorientation)",12825
+"194",4268911,FALSE,TRUE,9,"Disturbance of consciousness (stupor, delirium, confusion, disorientation)",12825
+"195",4196636,FALSE,FALSE,10,"Anarthria and dysarthria (unrelated to stroke)",12825
+"196",4098868,FALSE,TRUE,11,"Agraphia and dysgraphia",12825
+"197",4339222,FALSE,TRUE,11,"Agraphia and dysgraphia",12825
+"198",37110756,FALSE,TRUE,11,"Agraphia and dysgraphia",12825
+"199",440424,FALSE,FALSE,12,"Aphasia and dysphasia",12825
+"200",441594,FALSE,FALSE,12,"Aphasia and dysphasia",12825
+"201",443782,FALSE,TRUE,13,"Tremors",12825
+"202",4140090,FALSE,TRUE,14,"Parkinsonism, dystonia, extrapyramidal symptoms",12825
+"203",373747,FALSE,FALSE,14,"Parkinsonism, dystonia, extrapyramidal symptoms",12825
+"204",375800,FALSE,TRUE,14,"Parkinsonism, dystonia, extrapyramidal symptoms",12825
+"205",79908,FALSE,TRUE,15,"Muscle weakness",12825
+"206",4091559,FALSE,FALSE,16,"Facial palsy (incl. Bell's palsy)",12825
+"207",374923,FALSE,TRUE,16,"Facial palsy (incl. Bell's palsy)",12825
+"208",4002030,FALSE,TRUE,16,"Facial palsy (incl. Bell's palsy)",12825
+"209",42710044,FALSE,TRUE,16,"Facial palsy (incl. Bell's palsy)",12825
+"210",37204553,TRUE,FALSE,16,"Facial palsy (incl. Bell's palsy)",12825
+"211",433031,FALSE,TRUE,17,"Hallucinations (not caused by substance or dementia)",12825
+"212",372607,TRUE,TRUE,17,"Hallucinations (not caused by substance or dementia)",12825
+"213",4214950,TRUE,TRUE,17,"Hallucinations (not caused by substance or dementia)",12825
+"214",37109222,TRUE,TRUE,17,"Hallucinations (not caused by substance or dementia)",12825
+"215",4137955,TRUE,TRUE,17,"Hallucinations (not caused by substance or dementia)",12825
+"216",4155336,TRUE,TRUE,17,"Hallucinations (not caused by substance or dementia)",12825
+"217",4171175,TRUE,TRUE,17,"Hallucinations (not caused by substance or dementia)",12825
+"218",440987,TRUE,TRUE,17,"Hallucinations (not caused by substance or dementia)",12825
+"219",443432,FALSE,TRUE,18,"Cognitive and memory impairment (not age- or Alzheimer's-related)",12825
+"220",4009705,TRUE,TRUE,18,"Cognitive and memory impairment (not age- or Alzheimer's-related)",12825
+"221",44782432,TRUE,TRUE,18,"Cognitive and memory impairment (not age- or Alzheimer's-related)",12825
+"222",37117145,TRUE,TRUE,18,"Cognitive and memory impairment (not age- or Alzheimer's-related)",12825
+"223",36687122,TRUE,TRUE,18,"Cognitive and memory impairment (not age- or Alzheimer's-related)",12825
+"224",441130,FALSE,TRUE,19,"Meningeal irritation (meningismus)",12825
+"225",441553,FALSE,TRUE,21,"Myoclonus",12825
+"226",4152347,FALSE,TRUE,22,"Somnolence (drowsy)",12825
+"227",378253,FALSE,TRUE,23,"Headache",12825
+"228",374342,TRUE,TRUE,23,"Headache",12825
+"229",4065625,TRUE,TRUE,23,"Headache",12825
+"230",4055361,TRUE,TRUE,23,"Headache",12825
+"231",443615,TRUE,TRUE,23,"Headache",12825
+"232",373764,FALSE,FALSE,24,"Encephalopathy (condition)",12825
+"233",4047763,FALSE,FALSE,24,"Encephalopathy (condition)",12825
+"234",376690,FALSE,TRUE,25,"[EPI_1072] Cerebral edema",12825
+"235",4048796,TRUE,TRUE,25,"[EPI_1072] Cerebral edema",12825
+"236",377091,FALSE,TRUE,26,"[EPI_1072] Seizure",12825
+"237",4168681,FALSE,FALSE,27,"Irritability and restlessness",12825
+"238",4168212,FALSE,FALSE,27,"Irritability and restlessness",12825
+"239",441848,FALSE,TRUE,28,"Cranial nerve disorder (excluding Bell's palsy and not related to infection or neoplasm)",12825
+"240",4131106,TRUE,TRUE,28,"Cranial nerve disorder (excluding Bell's palsy and not related to infection or neoplasm)",12825
+"241",434824,TRUE,TRUE,28,"Cranial nerve disorder (excluding Bell's palsy and not related to infection or neoplasm)",12825
+"242",4169073,TRUE,TRUE,28,"Cranial nerve disorder (excluding Bell's palsy and not related to infection or neoplasm)",12825
+"243",36715546,TRUE,TRUE,28,"Cranial nerve disorder (excluding Bell's palsy and not related to infection or neoplasm)",12825
+"244",437496,TRUE,TRUE,28,"Cranial nerve disorder (excluding Bell's palsy and not related to infection or neoplasm)",12825
+"245",138682,TRUE,TRUE,28,"Cranial nerve disorder (excluding Bell's palsy and not related to infection or neoplasm)",12825
+"246",374923,TRUE,TRUE,28,"Cranial nerve disorder (excluding Bell's palsy and not related to infection or neoplasm)",12825
+"247",436806,TRUE,TRUE,28,"Cranial nerve disorder (excluding Bell's palsy and not related to infection or neoplasm)",12825
+"248",438155,TRUE,TRUE,28,"Cranial nerve disorder (excluding Bell's palsy and not related to infection or neoplasm)",12825
+"249",381504,TRUE,TRUE,28,"Cranial nerve disorder (excluding Bell's palsy and not related to infection or neoplasm)",12825
+"250",4105005,TRUE,TRUE,28,"Cranial nerve disorder (excluding Bell's palsy and not related to infection or neoplasm)",12825
+"251",44783224,FALSE,TRUE,29,"Focal motor weakness",12825
+"252",4065756,FALSE,TRUE,29,"Focal motor weakness",12825
+"253",40481389,TRUE,TRUE,29,"Focal motor weakness",12825
+"254",44782427,TRUE,TRUE,29,"Focal motor weakness",12825
+"255",4195475,FALSE,TRUE,30,"Bradykinesia (incl akinesia and hypokinesia)",12825
+"256",4143471,FALSE,TRUE,30,"Bradykinesia (incl akinesia and hypokinesia)",12825
+"257",437584,FALSE,TRUE,31,"Ataxia (incl cerebellar ataxia, non-hereditary)",12825
+"258",43531622,TRUE,TRUE,31,"Ataxia (incl cerebellar ataxia, non-hereditary)",12825
+"259",4225990,TRUE,TRUE,31,"Ataxia (incl cerebellar ataxia, non-hereditary)",12825
+"260",4263879,TRUE,TRUE,31,"Ataxia (incl cerebellar ataxia, non-hereditary)",12825
+"261",35622229,TRUE,TRUE,31,"Ataxia (incl cerebellar ataxia, non-hereditary)",12825
+"262",4133223,TRUE,TRUE,31,"Ataxia (incl cerebellar ataxia, non-hereditary)",12825
+"263",4050941,FALSE,TRUE,32,"Muscle rigidity (incl. cogwheel rigidity)",12825
+"264",4319906,FALSE,TRUE,33,"Dyskinesia",12825
+"265",35622040,TRUE,TRUE,33,"Dyskinesia",12825
+"266",4319462,TRUE,TRUE,33,"Dyskinesia",12825
+"267",375525,TRUE,TRUE,33,"Dyskinesia",12825
+"268",711584,FALSE,TRUE,34,"Assure Exposure - C -  levetiracetam",12825
+"269",734275,FALSE,TRUE,35,"Phenobarbital",12825
+"270",4181917,FALSE,TRUE,36,"Electroencephalogram (EEG)",12825
+"271",45889201,FALSE,TRUE,36,"Electroencephalogram (EEG)",12825
+"272",709744,FALSE,TRUE,38,"Lumbar or spinal puncture (diagnostic)",12825
+"273",4080549,FALSE,TRUE,38,"Lumbar or spinal puncture (diagnostic)",12825
+"274",739856,FALSE,TRUE,42,"CAR-T and T-cell therapy drugs",12825
+"275",792737,FALSE,TRUE,42,"CAR-T and T-cell therapy drugs",12825
+"276",37002369,FALSE,TRUE,42,"CAR-T and T-cell therapy drugs",12825
+"277",792844,FALSE,TRUE,42,"CAR-T and T-cell therapy drugs",12825
+"278",779144,FALSE,TRUE,42,"CAR-T and T-cell therapy drugs",12825
+"279",36026868,FALSE,TRUE,42,"CAR-T and T-cell therapy drugs",12825
+"280",45892531,FALSE,TRUE,42,"CAR-T and T-cell therapy drugs",12825
+"281",741578,FALSE,TRUE,42,"CAR-T and T-cell therapy drugs",12825
+"282",927062,FALSE,TRUE,43,"[EPI_1072] CAR-T and T-cell therapy procedures",12825
+"283",927060,FALSE,TRUE,43,"[EPI_1072] CAR-T and T-cell therapy procedures",12825
+"284",927061,FALSE,TRUE,43,"[EPI_1072] CAR-T and T-cell therapy procedures",12825
+"285",927059,FALSE,TRUE,43,"[EPI_1072] CAR-T and T-cell therapy procedures",12825
+"286",1532662,FALSE,TRUE,43,"[EPI_1072] CAR-T and T-cell therapy procedures",12825
+"287",1534922,FALSE,TRUE,43,"[EPI_1072] CAR-T and T-cell therapy procedures",12825
+"288",42639424,FALSE,TRUE,43,"[EPI_1072] CAR-T and T-cell therapy procedures",12825
+"289",42639752,FALSE,TRUE,43,"[EPI_1072] CAR-T and T-cell therapy procedures",12825
+"290",42639263,FALSE,TRUE,43,"[EPI_1072] CAR-T and T-cell therapy procedures",12825
+"291",42639217,FALSE,TRUE,43,"[EPI_1072] CAR-T and T-cell therapy procedures",12825

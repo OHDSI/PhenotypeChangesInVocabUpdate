@@ -5,38 +5,54 @@
 library (dplyr)
 library (openxlsx)
 library (readr)
+library (tibble)
 
 #library(stringr) not sure if it's used further
 
 install.packages("DatabaseConnector")
 
+#used for several functions so it can be here, but not an argument
 
-connectionDetails <- DatabaseConnector::createConnectionDetails(
-  dbms     = "your dbms",
-  server   = "your server",
-  user     = "your user name",
-  password = Sys.getenv("DATABASE_PASSWORD"),
-  port     = 9999,  # port to connect to your db
-  pathToDriver = "path to jdbc driver for db connector"
+
+# if security is enabled authorize use of the webapi
+ROhdsiWebApi::authorizeWebApi(
+  baseUrl = baseUrl,
+  authMethod = "windows")
+
+#list of cohorts to be evaluated
+cohorts <- "~/CohortChangeInVocabUpdate/Cohorts2.csv"
+#list of excluded nodes
+exclNode <- "~/CohortChangeInVocabUpdate/excl_node.csv"
+#Source concepts filtratoin rules
+sourceConceptRules<-"~/CohortChangeInVocabUpdate/source_concept_rules.csv"
+
+
+connectionDetails = DatabaseConnector::createConnectionDetails(
+  dbms = keyring::key_get("ohdaProdCCAE", "dbms" ),
+  connectionString = keyring::key_get("ohdaProdCCAE", "connectionString"),
+  user = keyring::key_get("ohdaProdCCAE", "username"),
+  password = keyring::key_get("ohdaProdCCAE", "password" )
 )
 
-# Create a v5.4 CDM and a v2.7.0 synthea database, in specified locations using specified files.
-# Update accordingly.
+resSchema <-'results_truven_ccae_v2435'
+workSchema <-'scratch_ddymshyt' # schema where you're allowed to create tables
+newVocabSchema <-'cdm_truven_ccae_v2324'
+oldVocabSchema <-'cdm_truven_ccae_v2182'
+resultSchema <-'scratch_ddymshyt' #schema with achillesresults, different from resSchema in JnJ
 
-cdmVersion        <- "5.4"
-cdmDatabaseSchema <- "cdm_synthea_v540"
-syntheaSchema     <- "synthea_v270"
-syntheaFileLoc    <- "D:/Apps/Git/synthea/output/csv"
-vocabFileLoc      <- "D:/Apps/Git/vocab/csv"
-syntheaVersion    <- "2.7.0"
 
-# Create CDM tables
-ETLSyntheaBuilder::CreateCDMTables(connectionDetails,cdmDatabaseSchema,cdmVersion)
-# Create synthea tables
-ETLSyntheaBuilder::CreateSyntheaTables(connectionDetails,syntheaSchema, syntheaVersion)
-# Populate synthea tables
-ETLSyntheaBuilder::LoadSyntheaTables(connectionDetails,syntheaSchema,syntheaFileLoc)
-# Populate vocabulary tables
-ETLSyntheaBuilder::LoadVocabFromCsv(connectionDetails,cdmDatabaseSchema,vocabFileLoc)
-# Populate event tables
-ETLSyntheaBuilder::LoadEventTables(connectionDetails,cdmDatabaseSchema,syntheaSchema,cdmVersion,syntheaVersion)
+
+# Create statistics on the source codes
+sourceCodesCnt<- sourceCodesCount()
+
+#create the dataframe with cohort-conceptSet-NodeConcept-desc-incl
+Concepts_in_cohortSet<-getNodeConcepts(cohorts)
+
+resultToExcel()
+
+#open the excel file
+#Windows
+shell.exec("PhenChange.xlsx")
+
+#MacOS
+#system(paste("open", "PhenChange.xlsx"))
