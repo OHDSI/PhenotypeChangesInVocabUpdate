@@ -1,11 +1,11 @@
-resultToExcel <-function()
+resultToExcel <-function(exclNode, ) #! add arguments including dataframes created by first 2 functions
 {
 #tables with parameters
 #you can exclude specific node concepts (for example Visits that were implemented differently than mappings)
-excl_node<-read.csv(exclNode)
+excl_node<-read.csv(exclNode) #! these goes to extras folder
 
 # you can exclude or include only specific source concepts
-source_concept_rules<-read.csv(sourceConceptRules)
+source_concept_rules<-read.csv(sourceConceptRules) #! these goes to extras folder
 
 source_concept_rules$rule_name <- as.character(source_concept_rules$rule_name)
 
@@ -49,8 +49,10 @@ DatabaseConnector::insertTable(connection = conn,
 
 
 # read SQL from file
-InitSql <- read_file("inst/sql/sql_server/AllFromNodes.sql")
 
+InitSql <- read_file("inst/sql/sql_server/AllFromNodes.sql")
+#! check if it works after documentation is done and is exported properly
+#InitSql <- read_file("AllFromNodes.sql")
 
 DatabaseConnector::renderTranslateExecuteSql (connection = conn,
                                               InitSql,
@@ -62,6 +64,7 @@ DatabaseConnector::renderTranslateExecuteSql (connection = conn,
 
 #get SQL tables into dataframes
 
+#! scratch_ddymshyt to replace with workSchema
 #source concepts resolved and their mapping in the old vocabulary
 oldMap <- DatabaseConnector::querySql(connection = conn,
                                       "select * from scratch_ddymshyt.oldmap", snakeCaseToCamelCase = F)

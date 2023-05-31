@@ -7,6 +7,10 @@ library (openxlsx)
 library (readr)
 library (tibble)
 
+#set the BaseUrl of your Atlas instance
+baseUrl <- "https://yourSecureAtlas.ohdsi.org/"
+
+
 #if packages are not installed, please install
 #install.packages("SqlRender")
 #install.packages("DatabaseConnector")
@@ -17,12 +21,21 @@ ROhdsiWebApi::authorizeWebApi(
   authMethod = "windows")
 
 #list of cohorts to be evaluated
-cohorts <- "~/CohortChangeInVocabUpdate/Cohorts2.csv"
+# put examples into extras folder
+#change to the
+
+#! this doesn't work, talk to Clair
+pathToCsv <- system.file("settings", "Cohorts.csv", package = "phenotypeChangeVocab")
+selectedCohortDefinitionList <- read.csv(pathToCsv)
+
+#specify cohorts you want to run the comparison for, in my example I import it from the CSV with one column containing cohortIds
+cohortsDF <- readr::read_delim("~/CohortChangeInVocabUpdate/Cohorts2.csv", delim = "\t", show_col_types = FALSE)
+cohorts <-cohortsDF[[1]]
+
 #list of excluded nodes
 exclNode <- "~/CohortChangeInVocabUpdate/excl_node.csv"
 #Source concepts filtratoin rules
 sourceConceptRules<-"~/CohortChangeInVocabUpdate/source_concept_rules.csv"
-
 
 connectionDetails = DatabaseConnector::createConnectionDetails(
   dbms = keyring::key_get("ohdaProdCCAE", "dbms" ),

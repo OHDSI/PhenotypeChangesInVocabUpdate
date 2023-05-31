@@ -1,7 +1,12 @@
-getNodeConcepts <- function(cohorts=cohorts)
+#' This function extracts the cohort_id - conceptSet - NodeConcept(the concept used in ConceptSetDefinition) - IsIncluded - includeDescendants
+#'
+#'
+#' @param cohorts  vector that contains cohorts to be evaluated
+#' @param baseUrl  the BaseUrl of your Atlas instance
+#' @export
+
+getNodeConcepts <- function(cohorts, baseUrl)
 {
-#specify cohorts you want to run the comparison for, file should have column called cohortId with cohortIds in it
-selectedCohortDefinitionList <- readr::read_delim(cohorts, delim = "\t", show_col_types = FALSE)
 
 #initial empty tibble that will be filled by the cycle
 Concepts_in_cohortSet <- tibble(
@@ -14,7 +19,7 @@ Concepts_in_cohortSet <- tibble(
 )
 
 #loop trough cohortIs
-for (cohortDefinitionId in selectedCohortDefinitionList$cohortId) {
+for (cohortDefinitionId in cohorts) {
   tryCatch({
     cohortDefinition <- ROhdsiWebApi::getCohortDefinition(cohortDefinitionId, baseUrl)
     cohortDefinitionExpression <- cohortDefinition$expression
@@ -73,8 +78,6 @@ for (cohortDefinitionId in selectedCohortDefinitionList$cohortId) {
     print(paste("cohort not found:",cohortDefinitionId)) }
   )
 }
-# store it as a file in case you want to review it
-write.csv(Concepts_in_cohortSet, "Concepts_in_cohortSetTest.csv")
 return(Concepts_in_cohortSet)
 }
 

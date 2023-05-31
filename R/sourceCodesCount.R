@@ -1,4 +1,14 @@
-sourceCodesCount <- function()
+#' Run the query to get source concepts counts across all CDM tables
+#'
+#'
+#' @param connectionDetails  An R object of type\cr\code{connectionDetails} created using the
+#'                                     function \code{createConnectionDetails} in the
+#'                                     \code{DatabaseConnector} package.
+#' @param resSchema           The schema with the Achilles Results
+#' @export
+
+
+sourceCodesCount <- function(resSchema,connectionDetails)
 {
   conn <- DatabaseConnector::connect(connectionDetails)
 
