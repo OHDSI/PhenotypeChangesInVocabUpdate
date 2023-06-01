@@ -1,4 +1,42 @@
---1. get the Node concepts that became non-standard and show their replacements
+--1. get counts of standard and source concepts
+--get the descendant_record_counts
+drop table if exists @workSchema.achilles_result_concept_count;
+create table @workSchema.achilles_result_concept_count as 
+with concept_cnt as (
+select stratum_1 as concept_id, sum (count_value) as cnt-- in case a concept ends up in several tables by mistake we count all occurrences anyway
+from @resultSchema.achilles_results ar where analysis_id in (
+401, --	Number of condition occurrence records, by condition_concept_id
+601,
+701,
+801,
+1801, -- measurement_concept_id
+2101 -- device
+)
+group by stratum_1
+)
+select a.concept_id, a.cnt as record_count, sum (d.cnt) as descendant_record_count from concept_cnt a
+join @newVocabSchema.concept_ancestor ca on ca.ancestor_concept_id =a.concept_id
+join concept_cnt d on d.concept_id = ca.descendant_concept_id 
+group by a.concept_id, a.cnt
+;
+--get counts of source codes
+drop table if exists @workSchema.sourceConceptCountAllSum;
+-- when source code is mapped to multiple tables (if source code is mapped to several concepts it's counted several times as well), so we look at source table with least occurrences
+--where probably it's mapped to one concept, in theory we can devide the numeric value to the number of target concepts per source concept
+create table @workSchema.sourceConceptCountAllSum as
+select stratum_1 as source_concept_id, min (count_value) as totalcount
+from
+@resultSchema.achilles_results
+where analysis_id in (425 -- condition_source_concept_id
+,625 -- procedure_source_concept_id
+,725 -- drug_source_concept_id
+,825 -- observation_source_concept_id
+,1825 -- measurement_source_concept_id
+,2125 -- device_source_concept_id
+)
+group by  stratum_1
+;
+--2. get the Node concepts that became non-standard and show their replacements
 drop table if exists @workSchema.non_st_Nodes
 ;
 create table @workSchema.non_st_Nodes as 
@@ -8,14 +46,14 @@ cm.concept_id as maps_to_concept_id, cm.concept_name as maps_to_concept_name,
 cmv.concept_id as maps_to_value_concept_id, cmv.concept_name as maps_to_value_concept_name
 from @workSchema.Concepts_in_cohortSet s
 join @newVocabSchema.concept cn on cn.concept_id = s.conceptid and cn.standard_concept is null
-left join @resultSchema.achilles_result_concept_count aro on aro.concept_id = cn.concept_id 
+left join @workSchema.achilles_result_concept_count aro on aro.concept_id = cn.concept_id 
 left join @newVocabSchema.concept_relationship cr on cr.concept_id_1 = cn.concept_id and cr.relationship_id ='Maps to'
 left join @newVocabSchema.concept cm on cm.concept_id = cr.concept_id_2 
 left join @newVocabSchema.concept_relationship crv on crv.concept_id_1 = cn.concept_id and crv.relationship_id ='Maps to value'
 left join @newVocabSchema.concept cmv on cmv.concept_id = crv.concept_id_2 
 order by drc desc
 ;
---2. get difference in target concepts
+--3. get difference in target concepts
 --resolve concept sets
 drop table if exists @workSchema.resolv_dif0
 ;
@@ -107,7 +145,7 @@ left join descnds d on a.cohortid = d.cohortid and a.conceptsetid = d.conceptset
 and a.isexcluded = d.isexcluded and a.includedescendants = d.includedescendants
 and a.action = d.action
 --add counts
-left join @resultSchema.achilles_result_concept_count aro on aro.concept_id = a.concept_id 
+left join @workSchema.achilles_result_concept_count aro on aro.concept_id = a.concept_id 
 -- add concept information
 join @newVocabSchema.concept c on c.concept_id = a.concept_id 
 where d.concept_id is null
@@ -286,6 +324,6 @@ select * from new_vc
 )
 join @oldVocabSchema.concept co on co.concept_id =descendant_concept_id
 join @newVocabSchema.concept cn on cn.concept_id =descendant_concept_id
-left join @resultSchema.achilles_result_concept_count aro on aro.concept_id = cn.concept_id 
+left join @workSchema.achilles_result_concept_count aro on aro.concept_id = cn.concept_id 
 where co.domain_id != cn.domain_id 
 ;

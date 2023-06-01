@@ -4,10 +4,10 @@
 \alias{getNodeConcepts}
 \title{This function extracts the cohort_id - conceptSet - NodeConcept(the concept used in ConceptSetDefinition) - IsIncluded - includeDescendants}
 \usage{
-getNodeConcepts(cohorts = cohorts, baseUrl)
+getNodeConcepts(cohorts, baseUrl)
 }
 \arguments{
-\item{cohorts}{list of cohorts to be evaluated}
+\item{cohorts}{vector that contains cohorts to be evaluated}
 
 \item{baseUrl}{the BaseUrl of your Atlas instance}
 }
