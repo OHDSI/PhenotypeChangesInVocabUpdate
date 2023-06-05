@@ -10,7 +10,6 @@ library (tibble)
 #set the BaseUrl of your Atlas instance
 baseUrl <- "https://yourSecureAtlas.ohdsi.org/"
 
-
 #if packages are not installed, please install
 #install.packages("SqlRender")
 #install.packages("DatabaseConnector")
