@@ -6,9 +6,8 @@ mDate: 2023-06-01
 Author: Dmitry Dymshyts [aut],
         Clair Blacketer [aut]
 Maintainer: Dmitry Dymshyts <ddymshyt@its.jnj.com>
-Description: It Compares source codes captured, hierarchy changes and domain changes; 
-			identifies Non-standard concepts used in concept set expressions
-			To do so you should have different vocabulary versions available in your DB 
+Description: It Compares source codes captured, hierarchy changes and domain changes as well as identifies Non-standard concepts used in concept set expressions
+  To be able to run it, you should have different vocabulary versions available in your DB 
 License: Apache License 2.0
 Imports:
     SqlRender,

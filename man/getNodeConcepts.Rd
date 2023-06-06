@@ -2,7 +2,7 @@
 % Please edit documentation in R/getNodeConcepts.R
 \name{getNodeConcepts}
 \alias{getNodeConcepts}
-\title{This function extracts the cohort_id - conceptSet - NodeConcept(the concept used in ConceptSetDefinition) - IsIncluded - includeDescendants}
+\title{Get cohortIds, concpetSet names and concept set expressions in a tabular format}
 \usage{
 getNodeConcepts(cohorts, baseUrl)
 }
@@ -12,5 +12,13 @@ getNodeConcepts(cohorts, baseUrl)
 \item{baseUrl}{the BaseUrl of your Atlas instance}
 }
 \description{
-This function extracts the cohort_id - conceptSet - NodeConcept(the concept used in ConceptSetDefinition) - IsIncluded - includeDescendants
+This function extracts the table with the following values:
+"ConceptID", "isExcluded", "includeDescendants", "conceptsetId", "conceptsetName", "cohortId"
+"ConceptID" is a concept used in concept set Expression
+}
+\examples{
+\dontrun{
+ getNodeConcepts(cohorts = c(12822, 12824, 12825),
+                 baseUrl = "https://yourSecureAtlas.ohdsi.org/" )
+}
 }

@@ -1,8 +1,19 @@
-#' This function extracts the cohort_id - conceptSet - NodeConcept(the concept used in ConceptSetDefinition) - IsIncluded - includeDescendants
+#' Get cohortIds, concpetSet names and concept set expressions in a tabular format
+#'
+#' @description
+#' This function extracts the table with the following values:
+#' "ConceptID", "isExcluded", "includeDescendants", "conceptsetId", "conceptsetName", "cohortId"
+#' "ConceptID" is a concept used in concept set Expression
 #'
 #'
 #' @param cohorts  vector that contains cohorts to be evaluated
 #' @param baseUrl  the BaseUrl of your Atlas instance
+#'
+#' @examples
+#' \dontrun{
+#'  getNodeConcepts(cohorts = c(12822, 12824, 12825),
+#'                  baseUrl = "https://yourSecureAtlas.ohdsi.org/" )
+#' }
 #' @export
 
 getNodeConcepts <- function(cohorts, baseUrl)

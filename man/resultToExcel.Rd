@@ -2,14 +2,7 @@
 % Please edit documentation in R/resultToExcel.R
 \name{resultToExcel}
 \alias{resultToExcel}
-\title{This function resolves concept sets in a SQl database, it needs an input of
-cohort_id - conceptSet - NodeConcept(the concept used in ConceptSetDefinition) - IsIncluded - includeDescendants,
-it then detects non-standard concepts used as part of concept set definition
-also detects the following changes in included concepts due to a vocabulary version change:
-1) added or excluded source concepts with changed mapping to standard concepts
-2) hierarchy changes are shown as peak concepts added or removed. the peak concept is the concept above which the hierarchy is altered
-3) domain changes of included standard concepts
-The result is stored as an excel file with the tab for each check}
+\title{This function resolves concept sets in a SQL database and writes the result to the Excel file}
 \usage{
 resultToExcel(
   connectionDetails,
@@ -41,12 +34,23 @@ it should have the following columns:
 \item{excludedNodes}{text string with excluded nodes, for example: "9201, 9202, 9203"; 0 by default}
 }
 \description{
-This function resolves concept sets in a SQl database, it needs an input of
-cohort_id - conceptSet - NodeConcept(the concept used in ConceptSetDefinition) - IsIncluded - includeDescendants,
-it then detects non-standard concepts used as part of concept set definition
-also detects the following changes in included concepts due to a vocabulary version change:
-1) added or excluded source concepts with changed mapping to standard concepts
-2) hierarchy changes are shown as peak concepts added or removed. the peak concept is the concept above which the hierarchy is altered
+This function resolves concept sets in a SQL database
+it uses an input of #' getNodeConcepts() funcion,
+it detects non-standard concepts used in concept set expression;
+also detects the changes in included concepts due to a vocabulary version change:
+1) added or excluded source concepts due to changed mapping to standard concepts
+2) added or excluded standard concepts due to hierarchy changes, only the "peak concepts" are shown
+ "peak concept" is a concept above which the hierarchy is altered
 3) domain changes of included standard concepts
-The result is stored as an excel file with the tab for each check
+The result is written to an excel file with the tab for each check
+}
+\examples{
+\dontrun{
+ resultToExcel(connectionDetails = YourconnectionDetails,
+ Concepts_in_cohortSet = Concepts_in_cohortSet, # is returned by getNodeConcepts function
+ workSchema = "workSchema", #schema where user is allowed to create tables
+ newVocabSchema = "omopVocab_v1", #schema containing newer vocabulary version
+ oldVocabSchema = "omopVocab_v0", #schema containing older vocabulary version
+ resultSchema = "achillesresults") #schema with achillesresults
+}
 }
