@@ -18,8 +18,7 @@ resultToExcel(
   newVocabSchema,
   oldVocabSchema,
   resultSchema,
-  excl_node,
-  source_concept_rules
+  excludedNodes = 0
 )
 }
 \arguments{
@@ -39,9 +38,7 @@ it should have the following columns:
 
 \item{resultSchema}{schema containing Achilles results}
 
-\item{excl_node}{dataframe with nodes excluded from analysis !! turn it into vector?}
-
-\item{source_concept_rules}{dataframe containing domain_id and vocabuary_id of source concepts excluded or included only in the output}
+\item{excludedNodes}{text string with excluded nodes, for example: "9201, 9202, 9203"; 0 by default}
 }
 \description{
 This function resolves concept sets in a SQl database, it needs an input of

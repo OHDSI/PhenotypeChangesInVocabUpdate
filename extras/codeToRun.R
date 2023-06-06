@@ -8,7 +8,7 @@ library (readr)
 library (tibble)
 
 #set the BaseUrl of your Atlas instance
-baseUrl <- "https://yourSecureAtlas.ohdsi.org/"
+#baseUrl <- "https://yourSecureAtlas.ohdsi.org/"
 
 #if packages are not installed, please install
 #install.packages("SqlRender")
@@ -19,31 +19,14 @@ ROhdsiWebApi::authorizeWebApi(
   baseUrl = baseUrl,
   authMethod = "windows")
 
-#list of cohorts to be evaluated
-# put examples into extras folder
-#change to the
-
-#! this doesn't work, talk to Clair
-pathToCsv <- system.file("settings", "Cohorts.csv", package = "phenotypeChangeVocab")
-selectedCohortDefinitionList <- read.csv(pathToCsv)
 
 #specify cohorts you want to run the comparison for, in my example I import it from the CSV with one column containing cohortIds
 # or you can define it as a vector directly: cohorts <-c(12822, 12824, 12825)
 cohortsDF <- readr::read_delim("~/CohortChangeInVocabUpdate/Cohorts2.csv", delim = "\t", show_col_types = FALSE)
 cohorts <-cohortsDF[[1]]
 
-#tables with parameters
-#you can exclude specific node concepts (for example Visits that were implemented differently than mappings)
-excl_node<-read.csv(exclNode) #! these goes to extras folder
-
-# you can exclude or include only specific source concepts
-source_concept_rules<-read.csv(sourceConceptRules) #! these goes to extras folder
-source_concept_rules$rule_name <- as.character(source_concept_rules$rule_name)
-
-#list of excluded nodes
-exclNode <- "~/CohortChangeInVocabUpdate/excl_node.csv"
-#Source concepts filtratoin rules
-sourceConceptRules<-"~/CohortChangeInVocabUpdate/source_concept_rules.csv"
+#exclude nodes
+#excludedNodes <-"9201, 9202, 9203"
 
 connectionDetails = DatabaseConnector::createConnectionDetails(
   dbms = keyring::key_get("ohdaProdCCAE", "dbms" ),
@@ -58,7 +41,7 @@ oldVocabSchema <-'cdm_truven_ccae_v2182'
 resultSchema <-'results_truven_ccae_v2435' #schema with achillesresults, different from resSchema in JnJ
 
 #create the dataframe with cohort-conceptSet-NodeConcept-desc-incl
-Concepts_in_cohortSet<-getNodeConcepts(cohorts)
+Concepts_in_cohortSet<-getNodeConcepts(cohorts, baseUrl)
 
 #write results to the Excel file
 resultToExcel(connectionDetails = connectionDetails,
@@ -66,9 +49,7 @@ resultToExcel(connectionDetails = connectionDetails,
               workSchema = workSchema,
               newVocabSchema = newVocabSchema,
               oldVocabSchema = oldVocabSchema,
-              resultSchema = resultSchema,
-              excl_node= excl_node,
-              source_concept_rules = source_concept_rules)
+              resultSchema = resultSchema)
 
 #open the excel file
 #Windows

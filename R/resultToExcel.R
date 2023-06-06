@@ -18,8 +18,7 @@
 #' @param newVocabSchema        schema containing a new vocabulary version
 #' @param oldVocabSchema        schema containing an older vocabulary version
 #' @param resultSchema          schema containing Achilles results
-#' @param excl_node             dataframe with nodes excluded from analysis !! turn it into vector?
-#' @param source_concept_rules  dataframe containing domain_id and vocabuary_id of source concepts excluded or included only in the output
+#' @param excludedNodes         text string with excluded nodes, for example: "9201, 9202, 9203"; 0 by default
 #' @export
 
 
@@ -29,8 +28,7 @@ resultToExcel <-function( connectionDetails,
                           newVocabSchema,
                           oldVocabSchema,
                           resultSchema,
-                          excl_node,
-                          source_concept_rules )
+                          excludedNodes = 0 )
 {
 #use databaseConnector to run SQL and extract tables into data frames
 
@@ -46,35 +44,17 @@ DatabaseConnector::insertTable(connection = conn,
                                tempTable = FALSE,
                                bulkLoad = TRUE)
 
-DatabaseConnector::insertTable(connection = conn,
-                               tableName = paste0(workSchema, ".excl_node"), # this should reflect the schema and table you'd like to insert into.
-                               data = excl_node, # the data frame you would like to insert into Redshift.
-                               dropTableIfExists = TRUE,
-                               createTable = TRUE,
-                               tempTable = FALSE,
-                               bulkLoad = TRUE)
-
-DatabaseConnector::insertTable(connection = conn,
-                               tableName = paste0(workSchema, ".source_concept_rules"), # this should reflect the schema and table you'd like to insert into.
-                               data = source_concept_rules, # the data frame you would like to insert into Redshift.
-                               dropTableIfExists = TRUE,
-                               createTable = TRUE,
-                               tempTable = FALSE,
-                               bulkLoad = TRUE)
-
-
 # read SQL from file
-
-InitSql <- read_file("inst/sql/sql_server/AllFromNodes.sql")
-#! check if it works after documentation is done and is exported properly
-#InitSql <- read_file("AllFromNodes.sql")
+pathToSql <- system.file("sql/sql_server", "AllFromNodes.sql", package = "phenotypeChangeVocab")
+InitSql <- read_file(pathToSql)
 
 DatabaseConnector::renderTranslateExecuteSql (connection = conn,
                                               InitSql,
                                               workSchema= workSchema,
                                               newVocabSchema=newVocabSchema,
                                               oldVocabSchema= oldVocabSchema,
-                                              resultSchema = resultSchema
+                                              resultSchema = resultSchema,
+                                              excludedNodes = excludedNodes
 )
 
 #get SQL tables into dataframes
@@ -118,8 +98,6 @@ mapDif <- oldMapAgg %>%
   inner_join(newMapAgg, by = c("COHORTID", "CONCEPTSETNAME", "CONCEPTSETID", "ISEXCLUDED", "INCLUDEDESCENDANTS", "NODE_CONCEPT_ID", "NODE_CONCEPT_NAME", "SOURCE_CONCEPT_ID", "TOTALCOUNT", "ACTION")) %>%
   filter(if_else(is.na(OLD_MAPPED_CONCEPT_ID), '', OLD_MAPPED_CONCEPT_ID) != if_else(is.na(NEW_MAPPED_CONCEPT_ID), '', NEW_MAPPED_CONCEPT_ID))%>%
   arrange(desc(TOTALCOUNT))
-
-
 
 summaryTable <- DatabaseConnector::renderTranslateQuerySql(connection = conn,
                                             "--summary table

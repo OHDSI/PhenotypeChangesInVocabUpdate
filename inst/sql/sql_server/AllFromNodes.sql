@@ -227,6 +227,7 @@ where a."action" ='Added' and b."action" ='Removed'
 )
 select dif.*, sc.totalcount  from @workSchema.resolv_dif_sc0 dif
 join @workSchema.sourceconceptcountallsum sc on dif.source_concept_id = sc.source_concept_id
+/* -- excessive functionality
 --allows to exlude by node concept
 left join @workSchema.excl_node en using (node_concept_id) 
  -- filter out source concepts 
@@ -239,11 +240,15 @@ left join @workSchema.source_concept_rules sr on
 c.vocabulary_id = sr.vocabulary_id and sr.domain_id = c.domain_id and rule_name in ('exc_and', 'inc_and')
 or c.vocabulary_id = sr.vocabulary_id and sr.domain_id = c.domain_id and rule_name in ('exc_or', 'inc_or')
 )
+*/
 where (cohortid, conceptsetname, conceptsetid, dif.source_concept_id) not in (select * from addexc)
+and node_concept_id not in (@excludedNodes)
+/*
 --part of source concept filter
 and (sr.rule_name is null or sr.rule_name in ('inc_or', 'inc_and'))
 --part of node concept filter
 and en.node_concept_id is null
+*/
 ;
 --added or removed source concepts with their old and new mappings so we can track these changes: previous table joined with old and new concept_relationship tables with 'Maps to'
 --Maps to value is ommitted, otherwise the result will be to cumbersome
