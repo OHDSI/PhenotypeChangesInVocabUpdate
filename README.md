@@ -1,8 +1,6 @@
 # Utility to compare cohorts run in different vocabulary versions by resolving their concept sets
 ## Compares source codes captured, hierarchy changes and domain changes; identifies Non-standard concepts used in concept set expressions
 
-
-
 ### Step by Step Example
 
 ```r
@@ -10,6 +8,10 @@ library (dplyr)
 library (openxlsx)
 library (readr)
 library (tibble)
+library (PhenotypeChangesInVocabUpdate)
+
+#set the BaseUrl of your Atlas instance
+#baseUrl <- "https://yourSecureAtlas.ohdsi.org/"
 
 #if packages are not installed, please install
 #install.packages("SqlRender")
@@ -20,13 +22,14 @@ ROhdsiWebApi::authorizeWebApi(
   baseUrl = baseUrl,
   authMethod = "windows")
 
-#list of cohorts to be evaluated
-cohorts <- "~/CohortChangeInVocabUpdate/Cohorts2.csv"
-#list of excluded nodes
-exclNode <- "~/CohortChangeInVocabUpdate/excl_node.csv"
-#Source concepts filtratoin rules
-sourceConceptRules<-"~/CohortChangeInVocabUpdate/source_concept_rules.csv"
 
+#specify cohorts you want to run the comparison for, in my example I import it from the CSV with one column containing cohortIds
+# or you can define it as a vector directly: cohorts <-c(12822, 12824, 12825)
+cohortsDF <- readr::read_delim("~/CohortChangeInVocabUpdate/Cohorts2.csv", delim = "\t", show_col_types = FALSE)
+cohorts <-cohortsDF[[1]]
+
+#exclude nodes
+#excludedNodes <-"9201, 9202, 9203"
 
 connectionDetails = DatabaseConnector::createConnectionDetails(
   dbms = keyring::key_get("ohdaProdCCAE", "dbms" ),
@@ -35,21 +38,19 @@ connectionDetails = DatabaseConnector::createConnectionDetails(
   password = keyring::key_get("ohdaProdCCAE", "password" )
 )
 
-resSchema <-'results_truven_ccae_v2435'
-workSchema <-'scratch_ddymshyt' # schema where you're allowed to create tables
 newVocabSchema <-'cdm_truven_ccae_v2324'
 oldVocabSchema <-'cdm_truven_ccae_v2182'
-resultSchema <-'scratch_ddymshyt' #schema with achillesresults, different from resSchema in JnJ
-
-
-# Create statistics on the source codes
-sourceCodesCnt<- sourceCodesCount()
+resultSchema <-'results_truven_ccae_v2435' #schema with achillesresults, different from resSchema in JnJ
 
 #create the dataframe with cohort-conceptSet-NodeConcept-desc-incl
-Concepts_in_cohortSet<-getNodeConcepts(cohorts)
+Concepts_in_cohortSet<-getNodeConcepts(cohorts, baseUrl)
 
 #write results to the Excel file
-resultToExcel()
+resultToExcel(connectionDetails = connectionDetails,
+              Concepts_in_cohortSet = Concepts_in_cohortSet,
+              newVocabSchema = newVocabSchema,
+              oldVocabSchema = oldVocabSchema,
+              resultSchema = resultSchema)
 
 #open the excel file
 #Windows

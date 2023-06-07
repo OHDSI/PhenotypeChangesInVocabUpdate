@@ -17,7 +17,6 @@
 #' @param Concepts_in_cohortSet dataframe which stores cohorts and concept set definitions in a tabular format,
 #'                              it should have the following columns:
 #'                              "ConceptID","isExcluded","includeDescendants","conceptsetId","conceptsetName","cohortId"
-#' @param workSchema            schema with a write access where tables are stored when executing the query
 #' @param newVocabSchema        schema containing a new vocabulary version
 #' @param oldVocabSchema        schema containing an older vocabulary version
 #' @param resultSchema          schema containing Achilles results
@@ -27,7 +26,6 @@
 #' \dontrun{
 #'  resultToExcel(connectionDetails = YourconnectionDetails,
 #'  Concepts_in_cohortSet = Concepts_in_cohortSet, # is returned by getNodeConcepts function
-#'  workSchema = "workSchema", #schema where user is allowed to create tables
 #'  newVocabSchema = "omopVocab_v1", #schema containing newer vocabulary version
 #'  oldVocabSchema = "omopVocab_v0", #schema containing older vocabulary version
 #'  resultSchema = "achillesresults") #schema with achillesresults
@@ -37,7 +35,6 @@
 
 resultToExcel <-function( connectionDetails,
                           Concepts_in_cohortSet,
-                          workSchema,
                           newVocabSchema,
                           oldVocabSchema,
                           resultSchema,
@@ -50,20 +47,19 @@ conn <- DatabaseConnector::connect(connectionDetails)
 #insert tables obtained in a previous steps, +tables with output filter parameters
 #for Redshift ask your administrator for a key for bulk load
 DatabaseConnector::insertTable(connection = conn,
-                               tableName = paste0(workSchema,".Concepts_in_cohortSet"), # this should reflect the schema and table you'd like to insert into.
+                               tableName = "#ConceptsInCohortSet", # this should reflect the schema and table you'd like to insert into.
                                data = Concepts_in_cohortSet, # the data frame you would like to insert into Redshift.
                                dropTableIfExists = TRUE,
                                createTable = TRUE,
-                               tempTable = FALSE,
+                               tempTable = TRUE,
                                bulkLoad = TRUE)
 
 # read SQL from file
-pathToSql <- system.file("sql/sql_server", "AllFromNodes.sql", package = "phenotypeChangeVocab")
+pathToSql <- system.file("sql/sql_server", "AllFromNodes.sql", package = "PhenotypeChangesInVocabUpdate")
 InitSql <- read_file(pathToSql)
 
 DatabaseConnector::renderTranslateExecuteSql (connection = conn,
                                               InitSql,
-                                              workSchema= workSchema,
                                               newVocabSchema=newVocabSchema,
                                               oldVocabSchema= oldVocabSchema,
                                               resultSchema = resultSchema,
@@ -74,11 +70,11 @@ DatabaseConnector::renderTranslateExecuteSql (connection = conn,
 
 #source concepts resolved and their mapping in the old vocabulary
 oldMap <- DatabaseConnector::renderTranslateQuerySql(connection = conn,
-                                      "select * from @workSchema.oldmap",workSchema= workSchema, snakeCaseToCamelCase = F)
+                                      "select * from #oldmap", snakeCaseToCamelCase = F)
 
 #source concepts resolved and their mapping in the new vocabulary
 newMap <- DatabaseConnector::renderTranslateQuerySql(connection = conn,
-                                      "select * from @workSchema.newmap", workSchema= workSchema,snakeCaseToCamelCase = F)
+                                      "select * from #newmap", snakeCaseToCamelCase = F)
 
 #aggregate the target concepts into one row so we can compare old and new mapping, newMap
 newMapAgg <-
@@ -114,21 +110,21 @@ mapDif <- oldMapAgg %>%
 
 summaryTable <- DatabaseConnector::renderTranslateQuerySql(connection = conn,
                                             "--summary table
-select cohortid, action, sum (totalcount) from @workSchema.resolv_dif_sc
+select cohortid, action, sum (totalcount) from #resolv_dif_sc
 --if concept appears in different nodes, it will be counted several times, but for an evaluation it's probably ok
 group by cohortid, action
-order by sum (totalcount) desc", workSchema= workSchema, snakeCaseToCamelCase = T)
+order by sum (totalcount) desc", snakeCaseToCamelCase = T)
 
 nonStNodes <- DatabaseConnector::renderTranslateQuerySql(connection = conn,
-                                          "select * from @workSchema.non_st_Nodes
-order by drc desc",workSchema= workSchema, snakeCaseToCamelCase = T) # to evaluate the best way of naming
+                                          "select * from #non_st_Nodes
+order by drc desc", snakeCaseToCamelCase = T) # to evaluate the best way of naming
 
 peakDif <- DatabaseConnector::renderTranslateQuerySql(connection = conn,
-                                       "select * from @workSchema.resolv_dif_peaks order by drc desc",workSchema= workSchema, snakeCaseToCamelCase = T)
+                                       "select * from #resolv_dif_peaks order by drc desc", snakeCaseToCamelCase = T)
 
 domainChange <-DatabaseConnector::renderTranslateQuerySql(connection = conn,
                                            "select * from
-                                           @workSchema.resolv_dom_dif order by drc desc", workSchema= workSchema, snakeCaseToCamelCase = T)
+                                           #resolv_dom_dif order by drc desc",  snakeCaseToCamelCase = T)
 DatabaseConnector::disconnect(conn)
 
 # put the tables in excel

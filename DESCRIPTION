@@ -1,8 +1,8 @@
-Package: phenotypeChangeVocab
+Package: PhenotypeChangesInVocabUpdate
 Type: Package
 Title: Utility to compare cohorts run in different vocabulary versions
 Version: 1.0
-mDate: 2023-06-01
+mDate: 2023-06-07
 Author: Dmitry Dymshyts [aut],
         Clair Blacketer [aut]
 Maintainer: Dmitry Dymshyts <ddymshyt@its.jnj.com>

@@ -7,7 +7,6 @@
 resultToExcel(
   connectionDetails,
   Concepts_in_cohortSet,
-  workSchema,
   newVocabSchema,
   oldVocabSchema,
   resultSchema,
@@ -22,8 +21,6 @@ function \code{createConnectionDetails} in the
 \item{Concepts_in_cohortSet}{dataframe which stores cohorts and concept set definitions in a tabular format,
 it should have the following columns:
 "ConceptID","isExcluded","includeDescendants","conceptsetId","conceptsetName","cohortId"}
-
-\item{workSchema}{schema with a write access where tables are stored when executing the query}
 
 \item{newVocabSchema}{schema containing a new vocabulary version}
 
@@ -48,7 +45,6 @@ The result is written to an excel file with the tab for each check
 \dontrun{
  resultToExcel(connectionDetails = YourconnectionDetails,
  Concepts_in_cohortSet = Concepts_in_cohortSet, # is returned by getNodeConcepts function
- workSchema = "workSchema", #schema where user is allowed to create tables
  newVocabSchema = "omopVocab_v1", #schema containing newer vocabulary version
  oldVocabSchema = "omopVocab_v0", #schema containing older vocabulary version
  resultSchema = "achillesresults") #schema with achillesresults

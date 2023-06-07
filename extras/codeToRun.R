@@ -1,11 +1,12 @@
 ######################################
-## PhenotypeChangesVocab code to run ##
+## PhenotypeChangesInVocabUpdate code to run ##
 ######################################
 
 library (dplyr)
 library (openxlsx)
 library (readr)
 library (tibble)
+library (PhenotypeChangesInVocabUpdate)
 
 #set the BaseUrl of your Atlas instance
 #baseUrl <- "https://yourSecureAtlas.ohdsi.org/"
@@ -35,7 +36,6 @@ connectionDetails = DatabaseConnector::createConnectionDetails(
   password = keyring::key_get("ohdaProdCCAE", "password" )
 )
 
-workSchema <-'scratch_ddymshyt' # schema where you're allowed to create tables
 newVocabSchema <-'cdm_truven_ccae_v2324'
 oldVocabSchema <-'cdm_truven_ccae_v2182'
 resultSchema <-'results_truven_ccae_v2435' #schema with achillesresults, different from resSchema in JnJ
@@ -46,7 +46,6 @@ Concepts_in_cohortSet<-getNodeConcepts(cohorts, baseUrl)
 #write results to the Excel file
 resultToExcel(connectionDetails = connectionDetails,
               Concepts_in_cohortSet = Concepts_in_cohortSet,
-              workSchema = workSchema,
               newVocabSchema = newVocabSchema,
               oldVocabSchema = oldVocabSchema,
               resultSchema = resultSchema)
