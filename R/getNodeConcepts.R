@@ -29,7 +29,7 @@ Concepts_in_cohortSet <- tibble(
   cohortDefinitionId = numeric()
 )
 
-#loop trough cohortIs
+#loop trough cohorts getting concept set list
 for (cohortDefinitionId in cohorts) {
   tryCatch({
     cohortDefinition <- ROhdsiWebApi::getCohortDefinition(cohortDefinitionId, baseUrl)
@@ -41,6 +41,7 @@ for (cohortDefinitionId in cohorts) {
       next
     }
 
+#empty tibble for conceptset - concept set expression
     Concepts_in_cohort <- tibble(
       conceptId = numeric(),
       isExcluded = logical(),
@@ -51,7 +52,6 @@ for (cohortDefinitionId in cohorts) {
 
     #loop through concept sets
     for (conceptSetIndex in 1:length(conceptsetList)) {
-      # conceptSet<- conceptsetList[[1]]$expression$items
       conceptSet<- conceptsetList[[conceptSetIndex]]$expression$items
 
       # skip any concept set that has no items
@@ -59,36 +59,40 @@ for (cohortDefinitionId in cohorts) {
         next
       }
 
-      #each inner circe starts from empty addedConcepts_agg table
+      #each inner circle starts from empty addedConcepts_agg table
       addedConcepts_agg <- tibble(
         conceptId = numeric(),
         isExcluded = logical(),
         includeDescendants =logical()
       )
 
-      #loop through the Node concepts
+      #loop through the Node concepts getting ConceptID, isExcluded, includeDescendants values
       for (conceptSetNodeIdex in 1:length(conceptSet)) {
         conceptSetNode <- conceptSet[[conceptSetNodeIdex]]$concept$CONCEPT_ID
         addedConcepts <-data.frame(ConceptID = conceptSetNode)
         addedConcepts$isExcluded <-conceptSet[[conceptSetNodeIdex]]$isExcluded
         addedConcepts$includeDescendants <-conceptSet[[conceptSetNodeIdex]]$includeDescendant
-
+#bind with previous run
         addedConcepts_agg<-rbind(addedConcepts_agg, addedConcepts)
       }
+      #bind with previous run
       t1 <-addedConcepts_agg
       t1$conceptsetId <-conceptsetList[[conceptSetIndex]]$id
       t1$conceptsetName <-conceptsetList[[conceptSetIndex]]$name
       Concepts_in_cohort <- rbind (Concepts_in_cohort, t1)
     }
+    #bind with previous run
     t2<-Concepts_in_cohort
     t2$cohortId<-cohortDefinitionId
     Concepts_in_cohortSet<-rbind(Concepts_in_cohortSet, t2)
   }
+#trycatch argument what to do in error
   , error = function (err) {
     print(err)
     print(paste("cohort not found:",cohortDefinitionId)) }
   )
 }
+#function returns one dataframe
 return(Concepts_in_cohortSet)
 }
 

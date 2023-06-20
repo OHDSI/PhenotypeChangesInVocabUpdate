@@ -10,6 +10,17 @@
 #' 3) domain changes of included standard concepts
 #' The result is written to an excel file with the tab for each check
 #'
+#' @return Writes an Excel file to disk. The Excel file has the following tabs:
+#'    summaryTable: Contains ... Each row represents ..., and the columns have the following meanings:
+#'      Column1: ...
+#'      Column2: ...
+#'   nonStNodes: Contains ... Each row represents ..., and the columns have the following meanings:
+#'      Column1: ...
+#'      Column2: ...
+#'    mapDif
+#'
+#' Interpretation of this file should ...
+#'
 #'
 #' @param connectionDetails An R object of type\cr\code{connectionDetails} created using the
 #'                                     function \code{createConnectionDetails} in the
@@ -41,14 +52,13 @@ resultToExcel <-function( connectionDetails,
                           excludedNodes = 0 )
 {
 #use databaseConnector to run SQL and extract tables into data frames
-
 conn <- DatabaseConnector::connect(connectionDetails)
 
-#insert tables obtained in a previous steps, +tables with output filter parameters
+#insert Concepts_in_cohortSet into the SQL database where concepts sets will be resolved
 #for Redshift ask your administrator for a key for bulk load
 DatabaseConnector::insertTable(connection = conn,
-                               tableName = "#ConceptsInCohortSet", # this should reflect the schema and table you'd like to insert into.
-                               data = Concepts_in_cohortSet, # the data frame you would like to insert into Redshift.
+                               tableName = "#ConceptsInCohortSet",
+                               data = Concepts_in_cohortSet,
                                dropTableIfExists = TRUE,
                                createTable = TRUE,
                                tempTable = TRUE,
@@ -58,6 +68,7 @@ DatabaseConnector::insertTable(connection = conn,
 pathToSql <- system.file("sql/sql_server", "AllFromNodes.sql", package = "PhenotypeChangesInVocabUpdate")
 InitSql <- read_file(pathToSql)
 
+#run the SQL creating all tables needed for the output
 DatabaseConnector::renderTranslateExecuteSql (connection = conn,
                                               InitSql,
                                               newVocabSchema=newVocabSchema,
@@ -68,6 +79,8 @@ DatabaseConnector::renderTranslateExecuteSql (connection = conn,
 
 #get SQL tables into dataframes
 
+#comparison on source codes can't be done on SQL, since the SQL render used in DatabaseConnector::renderTranslateQuerySql doesn't support STRING_AGG function
+# so this is done in R
 #source concepts resolved and their mapping in the old vocabulary
 oldMap <- DatabaseConnector::renderTranslateQuerySql(connection = conn,
                                       "select * from #oldmap", snakeCaseToCamelCase = F)
@@ -102,12 +115,13 @@ oldMapAgg <-
     OLD_MAPPED_CONCEPT_CODE = paste(CONCEPT_CODE, collapse = '-')
   )
 
-#join oldMap and newMap where targets are not equal
+#join oldMap and newMap where combination of target concepts are different
 mapDif <- oldMapAgg %>%
   inner_join(newMapAgg, by = c("COHORTID", "CONCEPTSETNAME", "CONCEPTSETID", "ISEXCLUDED", "INCLUDEDESCENDANTS", "NODE_CONCEPT_ID", "NODE_CONCEPT_NAME", "SOURCE_CONCEPT_ID", "TOTALCOUNT", "ACTION")) %>%
   filter(if_else(is.na(OLD_MAPPED_CONCEPT_ID), '', OLD_MAPPED_CONCEPT_ID) != if_else(is.na(NEW_MAPPED_CONCEPT_ID), '', NEW_MAPPED_CONCEPT_ID))%>%
   arrange(desc(TOTALCOUNT))
 
+#get the summaryTable - this table has cohortId and number of rows that have added or removed source concepts
 summaryTable <- DatabaseConnector::renderTranslateQuerySql(connection = conn,
                                             "--summary table
 select cohortid, action, sum (totalcount) from #resolv_dif_sc
@@ -115,19 +129,23 @@ select cohortid, action, sum (totalcount) from #resolv_dif_sc
 group by cohortid, action
 order by sum (totalcount) desc", snakeCaseToCamelCase = T)
 
+#get the non-standard concepts used in concept set definitions
 nonStNodes <- DatabaseConnector::renderTranslateQuerySql(connection = conn,
                                           "select * from #non_st_Nodes
 order by drc desc", snakeCaseToCamelCase = T) # to evaluate the best way of naming
 
+#get the changes in hierarchy
 peakDif <- DatabaseConnector::renderTranslateQuerySql(connection = conn,
                                        "select * from #resolv_dif_peaks order by drc desc", snakeCaseToCamelCase = T)
 
+#get the standard concepts changed domains
 domainChange <-DatabaseConnector::renderTranslateQuerySql(connection = conn,
                                            "select * from
                                            #resolv_dom_dif order by drc desc",  snakeCaseToCamelCase = T)
+#disconnect
 DatabaseConnector::disconnect(conn)
 
-# put the tables in excel
+# put the results in excel, each dataframe goes to a separate tab
 wb <- createWorkbook()
 
 addWorksheet(wb, "summaryTable")

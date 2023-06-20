@@ -14,7 +14,10 @@ Imports:
 	dplyr (>= 1.0.0),
 	readr (>= 2.1.0),
 	DatabaseConnector,
-	ROhdsiWebApi
+	ROhdsiWebApi,
+	keyring,
+  openxlsx,
+  tibble
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3

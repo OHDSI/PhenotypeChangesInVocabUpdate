@@ -30,6 +30,18 @@ it should have the following columns:
 
 \item{excludedNodes}{text string with excluded nodes, for example: "9201, 9202, 9203"; 0 by default}
 }
+\value{
+Writes an Excel file to disk. The Excel file has the following tabs:
+   summaryTable: Contains ... Each row represents ..., and the columns have the following meanings:
+     Column1: ...
+     Column2: ...
+  nonStNodes: Contains ... Each row represents ..., and the columns have the following meanings:
+     Column1: ...
+     Column2: ...
+   mapDif
+
+Interpretation of this file should ...
+}
 \description{
 This function resolves concept sets in a SQL database
 it uses an input of #' getNodeConcepts() funcion,
