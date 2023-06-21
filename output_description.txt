@@ -1,0 +1,76 @@
+The output description:
+Writes an Excel file to disk. 
+definitions used:
+"Node concept" is a concept directly used in Concept Set Expression
+"includedescendants": indicates whether descendants of "Node concept" are included in concept set, 0 stands for False, 1 stands for True
+"isexcluded": indicates whether "Node concept" and it's descendants if "includedescendants" = 1 are excluded from a concept set, 0 stands for False, 1 stands for True
+"drc": descendant record count - summary number of 
+"source concept": the concept set definition is usualy done through standard concepts. 
+Different clinical events might be captured with the same set of included standard concepts if mapping was changed, that's why the tool tracks source concepts related.
+
+
+
+The Excel file has the following tabs:
+1. summaryTable 
+sum of added or removed source concepts occurrences in a dataset
+- for example, the cohort_id 123 doesn't pick up source codes X and Y  when using newer vocabulary version. X appears 10 times in the data, Y appears 15 times.
+In this situation you'll get the following output:
+cohortid | action | sum
+123      | Removed| 25     
+
+2. nonStNodes
+lists non-standard concepts used in the concept set definition.
+Note, the concept set definition JSON isn't updated with the vocabulary updates, so you will not see concept changes in Atlas.
+So you need to run this tool to see non-stanard concepts (added by mistake or become non-standard over time)
+For example, the cohort_id 123 has conceptset ='depressoin' which has Node concept = "4059192|History of depression" with descendants included, 
+this concept is non-standard and mapped this way:
+Maps to "1340204|History of event"
+Maps to value "440383|Depressive disorder"
+In this situation you'll get the following output:
+cohortid | conceptsetname | conceptsetid | isexcluded | includedescendants | nodeConceptId | nodeConceptName       | drc   | mapsToConceptId | mapsToConceptName | mapsToValueConceptId | mapsToValueConceptName
+123      | depressoin     |        1     |    0       |      1             | 4059192       | History of depression | 45678 | 1340204         | History of event  |      440383          |Depressive disorder
+
+3. mapDif
+Shows related source concepts that were added or removed with their mapping for reference. 
+This way user knows why the difference in related source concepts occurrs.
+For example, 
+- first part is common for 3 checks, explain it in the begeninning
+
+cohortdefinitionid	3466
+cohortname	[PL] Earliest event of Systemic lupus erythematosus
+conceptsetname	SLE plus signs and symptoms of SLE
+node_concept_id	77074
+node_concept_name	Joint pain
+isexcluded	0
+includedescendants	0
+action	Added
+sourceconceptid	44831507
+sourceconceptname	Pain in joint, lower leg
+sourceconceptcode	719.46
+sourcevocabularyid	ICD9CM
+NewMappedConceptid	77074
+NewMappedconceptname	Joint pain
+oldmappedconceptid	4150062
+oldmappedconceptname	Knee pain
+Totalcount*	132464334
+
+4.peakDif
+"Peak concept": the common parent concept of added or removed standard concepts above which the hierarchy is changed
+
+cohortid	conceptsetid	conceptsetname	isexcluded	includedescendants	nodeConceptId	nodeConceptName	action	peakConceptId	peakName	peakCode	drc
+cohortid	12825
+conceptsetid	23
+conceptsetname	Headache
+isexcluded	0
+includedescendants	1
+nodeConceptId	378253
+nodeConceptName	Headache
+action	Added
+peakConceptId	375527
+peakName	Headache disorder
+peakCode	230461009
+drc	34219562
+
+
+
+

@@ -121,6 +121,8 @@ mapDif <- oldMapAgg %>%
   filter(if_else(is.na(OLD_MAPPED_CONCEPT_ID), '', OLD_MAPPED_CONCEPT_ID) != if_else(is.na(NEW_MAPPED_CONCEPT_ID), '', NEW_MAPPED_CONCEPT_ID))%>%
   arrange(desc(TOTALCOUNT))
 
+mapDif <- rename(mapDif, sourceCodesCount = TOTALCOUNT)
+
 #get the summaryTable - this table has cohortId and number of rows that have added or removed source concepts
 summaryTable <- DatabaseConnector::renderTranslateQuerySql(connection = conn,
                                             "--summary table
