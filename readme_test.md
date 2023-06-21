@@ -1,28 +1,3 @@
-<!-- Output copied to clipboard! -->
-
-<!-----
-
-Yay, no errors, warnings, or alerts!
-
-Conversion time: 0.52 seconds.
-
-
-Using this Markdown file:
-
-1. Paste this output into your source file.
-2. See the notes and action items below regarding this conversion run.
-3. Check the rendered output (headings, lists, code blocks, tables) for proper
-   formatting and use a linkchecker before you publish this page.
-
-Conversion notes:
-
-* Docs to Markdown version 1.0β34
-* Wed Jun 21 2023 08:24:22 GMT-0700 (PDT)
-* Source doc: Untitled document
-* Tables are currently converted to HTML tables.
------>
-
-
 The output description:
 
 Writes an Excel file to disk. 
@@ -51,9 +26,30 @@ sum of added or removed source concepts occurrences in a dataset
 
 In this situation you'll get the following output:
 
-cohortid | action | sum
 
-123      | Removed| 25     
+<table>
+  <tr>
+   <td>cohortid
+   </td>
+   <td>123
+   </td>
+  </tr>
+  <tr>
+   <td>action
+   </td>
+   <td>Removed
+   </td>
+  </tr>
+  <tr>
+   <td>sum
+   </td>
+   <td>25
+   </td>
+  </tr>
+</table>
+
+
+ 
 
 2. nonStNodes
 
@@ -73,9 +69,82 @@ Maps to value "440383|Depressive disorder"
 
 In this situation you'll get the following output:
 
-cohortid | conceptsetname | conceptsetid | isexcluded | includedescendants | nodeConceptId | nodeConceptName       | drc   | mapsToConceptId | mapsToConceptName | mapsToValueConceptId | mapsToValueConceptName
 
-123      | depressoin     |        1     |    0       |      1             | 4059192       | History of depression | 45678 | 1340204         | History of event  |      440383          |Depressive disorder
+<table>
+  <tr>
+   <td>cohortid
+   </td>
+   <td>10729
+   </td>
+  </tr>
+  <tr>
+   <td>conceptsetname
+   </td>
+   <td>Malignancies that spread to liver
+   </td>
+  </tr>
+  <tr>
+   <td>conceptsetid
+   </td>
+   <td>15
+   </td>
+  </tr>
+  <tr>
+   <td>isexcluded
+   </td>
+   <td>0
+   </td>
+  </tr>
+  <tr>
+   <td>includedescendants
+   </td>
+   <td>1
+   </td>
+  </tr>
+  <tr>
+   <td>nodeConceptId
+   </td>
+   <td>4324190
+   </td>
+  </tr>
+  <tr>
+   <td>nodeConceptName
+   </td>
+   <td>History of malignant neoplasm of breast
+   </td>
+  </tr>
+  <tr>
+   <td>drc
+   </td>
+   <td>20284048
+   </td>
+  </tr>
+  <tr>
+   <td>mapsToConceptId
+   </td>
+   <td>1340204
+   </td>
+  </tr>
+  <tr>
+   <td>mapsToConceptName
+   </td>
+   <td>History of event
+   </td>
+  </tr>
+  <tr>
+   <td>mapsToValueConceptId
+   </td>
+   <td>4112853
+   </td>
+  </tr>
+  <tr>
+   <td>mapsToValueConceptName
+   </td>
+   <td>Malignant tumor of breast
+   </td>
+  </tr>
+</table>
+
 
 3. mapDif
 
@@ -222,34 +291,169 @@ For example,
 
 "Peak concept": the common parent concept of added or removed standard concepts above which the hierarchy is changed
 
-cohortid	conceptsetid	conceptsetname	isexcluded	includedescendants	nodeConceptId	nodeConceptName	action	peakConceptId	peakName	peakCode	drc
 
-cohortid	12825
+<table>
+  <tr>
+   <td>cohortid
+   </td>
+   <td>12825
+   </td>
+  </tr>
+  <tr>
+   <td>conceptsetid
+   </td>
+   <td>23
+   </td>
+  </tr>
+  <tr>
+   <td>conceptsetname
+   </td>
+   <td>Headache
+   </td>
+  </tr>
+  <tr>
+   <td>isexcluded
+   </td>
+   <td>0
+   </td>
+  </tr>
+  <tr>
+   <td>includedescendants
+   </td>
+   <td>1
+   </td>
+  </tr>
+  <tr>
+   <td>nodeConceptId
+   </td>
+   <td>378253
+   </td>
+  </tr>
+  <tr>
+   <td>nodeConceptName
+   </td>
+   <td>Headache
+   </td>
+  </tr>
+  <tr>
+   <td>action
+   </td>
+   <td>Added
+   </td>
+  </tr>
+  <tr>
+   <td><strong>peakConceptId</strong>
+   </td>
+   <td><strong>375527</strong>
+   </td>
+  </tr>
+  <tr>
+   <td><strong>peakName</strong>
+   </td>
+   <td><strong>Headache disorder</strong>
+   </td>
+  </tr>
+  <tr>
+   <td>peakCode
+   </td>
+   <td>230461009
+   </td>
+  </tr>
+  <tr>
+   <td>drc
+   </td>
+   <td>34219562
+   </td>
+  </tr>
+</table>
 
-conceptsetid	23
-
-conceptsetname	Headache
-
-isexcluded	0
-
-includedescendants	1
-
-nodeConceptId	378253
-
-nodeConceptName	Headache
-
-action	Added
-
-peakConceptId	375527
-
-peakName	Headache disorder
-
-peakCode	230461009
-
-drc	34219562
 
 5. domainChange
 
-cohortid	conceptsetname	conceptsetid	isexcluded	includedescendants	nodeConceptId	nodeConceptName	conceptId	conceptName	vocabularyId	conceptCode	oldDomainId	newDomainId	drc
 
-10656	Treatment or investigation for TMA	20	0	1	4182536	Transfusion	2108163	Therapeutic apheresis; for plasma pheresis	CPT4	36514	Procedure	Measurement	1010478
+<table>
+  <tr>
+   <td>cohortid
+   </td>
+   <td>10656
+   </td>
+  </tr>
+  <tr>
+   <td>conceptsetname
+   </td>
+   <td>Treatment or investigation for TMA
+   </td>
+  </tr>
+  <tr>
+   <td>conceptsetid
+   </td>
+   <td>20
+   </td>
+  </tr>
+  <tr>
+   <td>isexcluded
+   </td>
+   <td>0
+   </td>
+  </tr>
+  <tr>
+   <td>includedescendants
+   </td>
+   <td>1
+   </td>
+  </tr>
+  <tr>
+   <td>nodeConceptId
+   </td>
+   <td>4182536
+   </td>
+  </tr>
+  <tr>
+   <td>nodeConceptName
+   </td>
+   <td>Transfusion
+   </td>
+  </tr>
+  <tr>
+   <td>conceptId
+   </td>
+   <td>2108163
+   </td>
+  </tr>
+  <tr>
+   <td>conceptName
+   </td>
+   <td>Therapeutic apheresis; for plasma pheresis
+   </td>
+  </tr>
+  <tr>
+   <td>vocabularyId
+   </td>
+   <td>CPT4
+   </td>
+  </tr>
+  <tr>
+   <td>conceptCode
+   </td>
+   <td>36514
+   </td>
+  </tr>
+  <tr>
+   <td><strong>oldDomainId</strong>
+   </td>
+   <td><strong>Procedure</strong>
+   </td>
+  </tr>
+  <tr>
+   <td><strong>newDomainId</strong>
+   </td>
+   <td><strong>Measurement</strong>
+   </td>
+  </tr>
+  <tr>
+   <td>drc
+   </td>
+   <td>1010478
+   </td>
+  </tr>
+</table>
