@@ -227,6 +227,8 @@ In this situation you'll get the output below, which gives you the **target conc
 
 Tab shows related source concepts that were added or removed. Mapping in both vocabulary versions is shown. 
 
+Note, source codes from the user's database only are included into the analysis.
+
 This way the user knows why the difference in related source concepts occurs and might modify the concept set expression adding or removing mapped concepts.
 
 - In the example below, events with ICD9CM “Neural hearing loss concept, unilateral” are now captured because of the mapping change. OLD_MAPPED_CONCEPT “Unilateral neural hearing loss” didn’t have the proper hierarchy, and wasn’t captured.
