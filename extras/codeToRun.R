@@ -16,7 +16,6 @@ ROhdsiWebApi::authorizeWebApi(
   baseUrl = baseUrl,
   authMethod = "windows")
 
-
 #specify cohorts you want to run the comparison for, in my example I import it from the CSV with one column containing cohortIds
 #the example file is located in "~/PhenotypeChangesInVocabUpdate/extras/Cohorts.csv"
 # also you can define the cohorts as vector directly:
@@ -38,16 +37,16 @@ cohorts <-cohortsDF[[1]]
 
 # you can also define connectionDetails directly, see the DatabaseConnector documentation https://ohdsi.github.io/DatabaseConnector/
 
-connectionDetails = DatabaseConnector::createConnectionDetails(
-  dbms = keyring::key_get("YourDatabase", "dbms" ),
-  connectionString = keyring::key_get("YourDatabase", "connectionString"),
-  user = keyring::key_get("YourDatabase", "username"),
-  password = keyring::key_get("YourDatabase", "password" )
-)
+ connectionDetails = DatabaseConnector::createConnectionDetails(
+   dbms = keyring::key_get("YourDatabase", "dbms" ),
+   connectionString = keyring::key_get("YourDatabase", "connectionString"),
+   user = keyring::key_get("YourDatabase", "username"),
+   password = keyring::key_get("YourDatabase", "password" )
+ )
 
-newVocabSchema <-'cdm_truven_ccae_v2324' #schema containing a new vocabulary version
-oldVocabSchema <-'cdm_truven_ccae_v2182' #schema containing an older vocabulary version
-resultSchema <-'results_truven_ccae_v2435' #schema containing Achilles results
+newVocabSchema <-'vocab_schema_n1' #schema containing a new vocabulary version
+oldVocabSchema <-'vocab_schema_n0' #schema containing an older vocabulary version
+resultSchema <-'achilles_results' #schema containing Achilles results
 
 #create the dataframe with concept set expressions using the getNodeConcepts function
 Concepts_in_cohortSet<-getNodeConcepts(cohorts, baseUrl)
