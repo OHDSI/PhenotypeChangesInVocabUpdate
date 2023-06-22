@@ -1,7 +1,7 @@
 # Utility to compare cohorts run in different vocabulary versions by resolving their concept sets
-## Compares source codes captured, hierarchy changes and domain changes; identifies Non-standard concepts used in concept set expressions
+### Compares source codes captured, hierarchy changes and domain changes; identifies Non-standard concepts used in concept set expressions
 
-### Step by Step Example
+## Step by Step Example
 
 ```r
 library (dplyr)
@@ -39,12 +39,12 @@ cohorts <-cohortsDF[[1]]
 
 # you can also define connectionDetails directly, see the DatabaseConnector documentation https://ohdsi.github.io/DatabaseConnector/
 
-# connectionDetails = DatabaseConnector::createConnectionDetails(
-#   dbms = keyring::key_get("YourDatabase", "dbms" ),
-#   connectionString = keyring::key_get("YourDatabase", "connectionString"),
-#   user = keyring::key_get("YourDatabase", "username"),
-#   password = keyring::key_get("YourDatabase", "password" )
-# )
+connectionDetails = DatabaseConnector::createConnectionDetails(
+  dbms = keyring::key_get("YourDatabase", "dbms" ),
+  connectionString = keyring::key_get("YourDatabase", "connectionString"),
+  user = keyring::key_get("YourDatabase", "username"),
+  password = keyring::key_get("YourDatabase", "password" )
+)
 
 newVocabSchema <-'vocab_schema_n1' #schema containing a new vocabulary version
 oldVocabSchema <-'vocab_schema_n0' #schema containing an older vocabulary version
@@ -89,7 +89,7 @@ Writes an Excel file with a separate tab for each type of comparison.
 
 Different clinical events might be captured with the same set of included standard concepts if mapping was changed, that's why the tool tracks source concepts related.
 
-**“Action”: **flags whether concept or hierarchy branch is added or removed
+**“Action”:** flags whether concept or hierarchy branch is added or removed
 
 
 ## The Excel file has the following tabs:
@@ -135,7 +135,7 @@ Note, the concept set definition JSON isn't updated with the vocabulary update, 
 
 This way you need to run this tool to see if concepts changed to non-standard.
 
-For example, the cohort_id 10729 has conceptset =’Malignancies that spread to liver’ which has Node concept = "4324190|History of malignant neoplasm of breast" with descendants included, 
+- For example, the cohort_id 10729 has conceptset =’Malignancies that spread to liver’ which has Node concept = "4324190|History of malignant neoplasm of breast" with descendants included, 
 
 this concept is non-standard and mapped this way:
 
@@ -229,7 +229,7 @@ Tab shows related source concepts that were added or removed. Mapping in both vo
 
 This way the user knows why the difference in related source concepts occurs and might modify the concept set expression adding or removing mapped concepts.
 
-In the example below, events with ICD9CM “Neural hearing loss concept, unilateral” are now captured because of the mapping change. OLD_MAPPED_CONCEPT “Unilateral neural hearing loss” didn’t have the proper hierarchy, and wasn’t captured.
+- In the example below, events with ICD9CM “Neural hearing loss concept, unilateral” are now captured because of the mapping change. OLD_MAPPED_CONCEPT “Unilateral neural hearing loss” didn’t have the proper hierarchy, and wasn’t captured.
 
 
 <table>
@@ -367,7 +367,7 @@ In the example below, events with ICD9CM “Neural hearing loss concept, unilate
 
 Hierarchy change is reflected at "Peak concept" level, the common parent concept of added or removed standard concepts above which the hierarchy is changed.
 
-In the example below, the **375527|Headache disorder **and all its descendants were added to the concept **Headache **concept set. This is quite a big change since **drc **(descendant record count)** **= 34219562, and now a researcher has to decide whether the new, more broad, definition fits well.
+- In the example below, the **375527|Headache disorder** and all its descendants were added to the concept **Headache** concept set. This is quite a big change since **drc** (descendant record count)= 34219562, and now a researcher has to decide whether the new, more broad, definition fits well.
 
 
 <table>
@@ -451,7 +451,7 @@ In the example below, the **375527|Headache disorder **and all its descendants w
 
 This tab shows included concepts that changed their domain, so the different event table should be used.
 
-In the example below “2108163|Therapeutic apheresis; for plasma pheresis” concept changed its domain from **Procedure **to **Measurement, **so the concept set “Treatment or investigation for TMA” needs to be used with Measurement table as well to include the “2108163|Therapeutic apheresis; for plasma pheresis” events.
+- In the example below “2108163|Therapeutic apheresis; for plasma pheresis” concept changed its domain from **Procedure** to **Measurement**, so the concept set “Treatment or investigation for TMA” needs to be used with Measurement table as well to include the “2108163|Therapeutic apheresis; for plasma pheresis” events.
 
 
 <table>
