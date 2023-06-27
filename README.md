@@ -59,7 +59,7 @@ resultSchema <-'achilles_results' #schema containing Achilles results
 #create the dataframe with concept set expressions using the getNodeConcepts function
 Concepts_in_cohortSet<-getNodeConcepts(cohorts, baseUrl)
 
-#resolve concept sets, compare the outputs on different vocabulary versions, write results to the Excel file
+#resolve concept sets, compare the outputs on different vocabulary versions, write results to the Excel file "PhenChange.xlsx" saved in a session root folder
 resultToExcel(connectionDetails = connectionDetails,
               Concepts_in_cohortSet = Concepts_in_cohortSet,
               newVocabSchema = newVocabSchema,
