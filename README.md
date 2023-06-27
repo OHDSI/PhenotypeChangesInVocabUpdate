@@ -7,7 +7,7 @@
 
 ```r
 #install package
-remotes::install_github("OHDSI/PhenotypeChangesInVocabUpdate/phenotypeChangeVocab")
+remotes::install_github("OHDSI/PhenotypeChangesInVocabUpdate")
 
 library (dplyr)
 library (openxlsx)
