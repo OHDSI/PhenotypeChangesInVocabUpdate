@@ -3,10 +3,12 @@
 
 ## Step by Step Example
 
-#install package
-remotes::install_github("dimshitc/phenotypeChangeVocab")
+
 
 ```r
+#install package
+remotes::install_github("OHDSI/PhenotypeChangesInVocabUpdate/phenotypeChangeVocab")
+
 library (dplyr)
 library (openxlsx)
 library (readr)
