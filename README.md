@@ -89,11 +89,9 @@ Writes an Excel file with a separate tab for each type of comparison.
 
 **"isexcluded"**: indicates whether "Node concept" and it's descendants if "includedescendants" = 1 are excluded from a concept set, 0 stands for False, 1 stands for True
 
-**"drc"**: descendant record count - summary number of 
+**"drc"**: descendant record count - total number of occurrences of descendants of a given concept
 
-**"source concept":** the concept set definition is usually done through standard concepts. 
-
-Different clinical events might be captured with the same set of included standard concepts if mapping was changed, that's why the tool tracks source concepts related.
+**"source concept":** related source concept_id. The concept set definition is usually done through standard concepts, but different clinical events might be captured with the same standard concepts if mapping was changed, that's why the tool tracks source concepts related.
 
 **“Action”:** flags whether concept or hierarchy branch is added or removed
 
@@ -103,7 +101,7 @@ Different clinical events might be captured with the same set of included standa
 
 ### 1. summaryTable 
 
-sum of added or removed source concepts occurrences in a dataset
+sum of added or removed source concepts occurrences in a dataset per cohort
 
 - for example, the cohort_id 123 doesn't pick up source codes X and Y when using newer vocabulary version. X appears 10 times in the data, Y appears 15 times.
 
@@ -375,7 +373,7 @@ This way the user knows why the difference in related source concepts occurs and
 
 Hierarchy change is reflected at "Peak concept" level, the common parent concept of added or removed standard concepts above which the hierarchy is changed.
 
-- In the example below, the **375527|Headache disorder** and all its descendants were added to the concept **Headache** concept set. This is quite a big change since **drc** (descendant record count)= 34219562, and now a researcher has to decide whether the new, more broad, definition fits well.
+- In the example below, the **375527|Headache disorder** and all its descendants were added to the included concepts in the **Headache** concept set. This is quite a big change since **drc** (descendant record count)= 34219562, and now a researcher has to decide whether the new, more broad, definition fits well.
 
 
 <table>

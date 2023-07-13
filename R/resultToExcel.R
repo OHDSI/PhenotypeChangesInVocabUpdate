@@ -1,7 +1,7 @@
 #' This function resolves concept sets in a SQL database and writes the result to the Excel file
 #'
 #' @description This function resolves concept sets in a SQL database
-#' it uses an input of #' getNodeConcepts() funcion,
+#' it uses an input of \code{getNodeConcepts()} funcion,
 #' it detects non-standard concepts used in concept set expression;
 #' also detects the changes in included concepts due to a vocabulary version change:
 #' 1) added or excluded source concepts due to changed mapping to standard concepts
@@ -9,17 +9,6 @@
 #'  "peak concept" is a concept above which the hierarchy is altered
 #' 3) domain changes of included standard concepts
 #' The result is written to an excel file with the tab for each check
-#'
-#' @return Writes an Excel file to disk. The Excel file has the following tabs:
-#'    summaryTable: Contains ... Each row represents ..., and the columns have the following meanings:
-#'      Column1: ...
-#'      Column2: ...
-#'   nonStNodes: Contains ... Each row represents ..., and the columns have the following meanings:
-#'      Column1: ...
-#'      Column2: ...
-#'    mapDif
-#'
-#' Interpretation of this file should ...
 #'
 #'
 #' @param connectionDetails An R object of type\cr\code{connectionDetails} created using the

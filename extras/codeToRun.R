@@ -52,6 +52,7 @@ resultSchema <-'achilles_results' #schema containing Achilles results
 Concepts_in_cohortSet<-getNodeConcepts(cohorts, baseUrl)
 
 #resolve concept sets, compare the outputs on different vocabulary versions, write results to the Excel file
+#for Redshift ask your administrator for a key for bulk load, since the function uploads the data to the database
 resultToExcel(connectionDetails = connectionDetails,
               Concepts_in_cohortSet = Concepts_in_cohortSet,
               newVocabSchema = newVocabSchema,
