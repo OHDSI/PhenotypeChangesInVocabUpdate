@@ -33,7 +33,7 @@
 #' @export
 
 
-resultToExcel <-function( connectionDetails,
+resultToExcel <-function( connectionDetailsVocab,
                           Concepts_in_cohortSet,
                           newVocabSchema,
                           oldVocabSchema,
@@ -41,7 +41,22 @@ resultToExcel <-function( connectionDetails,
                           excludedNodes = 0 )
 {
 #use databaseConnector to run SQL and extract tables into data frames
-conn <- DatabaseConnector::connect(connectionDetails)
+
+
+
+  #connect to the vocabulary server
+conn <- DatabaseConnector::connect(connectionDetailsVocab)
+
+
+DatabaseConnector::insertTable(connection = conn,
+                              # tableName = "scratch_ddymshyt.achilles_Result_CC",
+                               tableName = "#achilles_Result_CC",
+                               data = achillesResultConceptCount,
+                               dropTableIfExists = TRUE,
+                               createTable = TRUE,
+                               tempTable = T,
+                               bulkLoad = TRUE)
+
 
 #insert Concepts_in_cohortSet into the SQL database where concepts sets will be resolved
 #for Redshift ask your administrator for a key for bulk load
@@ -53,16 +68,19 @@ DatabaseConnector::insertTable(connection = conn,
                                tempTable = TRUE,
                                bulkLoad = TRUE)
 
+
 # read SQL from file
-pathToSql <- system.file("sql/sql_server", "AllFromNodes.sql", package = "PhenotypeChangesInVocabUpdate")
-InitSql <- read_file(pathToSql)
+#pathToSql <- system.file("sql/sql_server", "AllFromNodes.sql", package = "PhenotypeChangesInVocabUpdate")
+#InitSql <- read_file(pathToSql)
+
+InitSql = read_file('D:/PhenotypeChangesInVocabUpdateOHDSI/inst/sql/sql_server/AllFromNodes.sql')
 
 #run the SQL creating all tables needed for the output
 DatabaseConnector::renderTranslateExecuteSql (connection = conn,
                                               InitSql,
                                               newVocabSchema=newVocabSchema,
                                               oldVocabSchema= oldVocabSchema,
-                                              resultSchema = resultSchema,
+                                              #resultSchema = resultSchema,
                                               excludedNodes = excludedNodes
 )
 
@@ -82,7 +100,7 @@ newMap <- DatabaseConnector::renderTranslateQuerySql(connection = conn,
 newMapAgg <-
   newMap %>%
   arrange(CONCEPT_ID) %>%
-  group_by(COHORTID, CONCEPTSETNAME, CONCEPTSETID, ISEXCLUDED, INCLUDEDESCENDANTS, NODE_CONCEPT_ID, NODE_CONCEPT_NAME, SOURCE_CONCEPT_ID, TOTALCOUNT, ACTION) %>%
+  group_by(COHORTID, CONCEPTSETNAME, CONCEPTSETID, ISEXCLUDED, INCLUDEDESCENDANTS, NODE_CONCEPT_ID, NODE_CONCEPT_NAME, SOURCE_CONCEPT_ID, RECORD_COUNT, ACTION) %>%
   summarise(
     NEW_MAPPED_CONCEPT_ID = paste(CONCEPT_ID, collapse = '-'),
     NEW_MAPPED_CONCEPT_NAME = paste(CONCEPT_NAME, collapse = '-'),
@@ -94,7 +112,7 @@ newMapAgg <-
 oldMapAgg <-
   oldMap %>%
   arrange(CONCEPT_ID) %>%
-  group_by(COHORTID, CONCEPTSETNAME, CONCEPTSETID, ISEXCLUDED, INCLUDEDESCENDANTS, NODE_CONCEPT_ID, NODE_CONCEPT_NAME, SOURCE_CONCEPT_ID, TOTALCOUNT, ACTION,
+  group_by(COHORTID, CONCEPTSETNAME, CONCEPTSETID, ISEXCLUDED, INCLUDEDESCENDANTS, NODE_CONCEPT_ID, NODE_CONCEPT_NAME, SOURCE_CONCEPT_ID, RECORD_COUNT, ACTION,
            SOURCE_CONCEPT_NAME, SOURCE_VOCABULARY_ID, SOURCE_CONCEPT_CODE
   ) %>%
   summarise(
@@ -106,19 +124,19 @@ oldMapAgg <-
 
 #join oldMap and newMap where combination of target concepts are different
 mapDif <- oldMapAgg %>%
-  inner_join(newMapAgg, by = c("COHORTID", "CONCEPTSETNAME", "CONCEPTSETID", "ISEXCLUDED", "INCLUDEDESCENDANTS", "NODE_CONCEPT_ID", "NODE_CONCEPT_NAME", "SOURCE_CONCEPT_ID", "TOTALCOUNT", "ACTION")) %>%
+  inner_join(newMapAgg, by = c("COHORTID", "CONCEPTSETNAME", "CONCEPTSETID", "ISEXCLUDED", "INCLUDEDESCENDANTS", "NODE_CONCEPT_ID", "NODE_CONCEPT_NAME", "SOURCE_CONCEPT_ID", "RECORD_COUNT", "ACTION")) %>%
   filter(if_else(is.na(OLD_MAPPED_CONCEPT_ID), '', OLD_MAPPED_CONCEPT_ID) != if_else(is.na(NEW_MAPPED_CONCEPT_ID), '', NEW_MAPPED_CONCEPT_ID))%>%
-  arrange(desc(TOTALCOUNT))
+  arrange(desc(RECORD_COUNT))
 
-mapDif <- rename(mapDif, sourceCodesCount = TOTALCOUNT)
+#mapDif <- rename(mapDif, sourceCodesCount = RECORD_COUNT)
 
 #get the summaryTable - this table has cohortId and number of rows that have added or removed source concepts
 summaryTable <- DatabaseConnector::renderTranslateQuerySql(connection = conn,
                                             "--summary table
-select cohortid, action, sum (totalcount) from #resolv_dif_sc
+select cohortid, action, sum (record_count) from #resolv_dif_sc
 --if concept appears in different nodes, it will be counted several times, but for an evaluation it's probably ok
 group by cohortid, action
-order by sum (totalcount) desc", snakeCaseToCamelCase = T)
+order by sum (record_count) desc", snakeCaseToCamelCase = T)
 
 #get the non-standard concepts used in concept set definitions
 nonStNodes <- DatabaseConnector::renderTranslateQuerySql(connection = conn,
