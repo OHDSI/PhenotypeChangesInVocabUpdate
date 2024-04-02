@@ -48,14 +48,14 @@ resultToExcel <-function( connectionDetailsVocab,
 conn <- DatabaseConnector::connect(connectionDetailsVocab)
 
 
-DatabaseConnector::insertTable(connection = conn,
-                              # tableName = "scratch_ddymshyt.achilles_Result_CC",
-                               tableName = "#achilles_Result_CC",
-                               data = achillesResultConceptCount,
-                               dropTableIfExists = TRUE,
-                               createTable = TRUE,
-                               tempTable = T,
-                               bulkLoad = TRUE)
+# DatabaseConnector::insertTable(connection = conn,
+#                               # tableName = "scratch_ddymshyt.achilles_Result_CC",
+#                                tableName = "#achilles_Result_CC",
+#                                data = achillesResultConceptCount,
+#                                dropTableIfExists = TRUE,
+#                                createTable = TRUE,
+#                                tempTable = T,
+#                                bulkLoad = TRUE)
 
 
 #insert Concepts_in_cohortSet into the SQL database where concepts sets will be resolved
@@ -100,7 +100,7 @@ newMap <- DatabaseConnector::renderTranslateQuerySql(connection = conn,
 newMapAgg <-
   newMap %>%
   arrange(CONCEPT_ID) %>%
-  group_by(COHORTID, CONCEPTSETNAME, CONCEPTSETID, ISEXCLUDED, INCLUDEDESCENDANTS, NODE_CONCEPT_ID, NODE_CONCEPT_NAME, SOURCE_CONCEPT_ID, RECORD_COUNT, ACTION) %>%
+  group_by(COHORTID,COHORTNAME, CONCEPTSETNAME, CONCEPTSETID, ISEXCLUDED, INCLUDEDESCENDANTS, NODE_CONCEPT_ID, NODE_CONCEPT_NAME, SOURCE_CONCEPT_ID, RECORD_COUNT, ACTION) %>%
   summarise(
     NEW_MAPPED_CONCEPT_ID = paste(CONCEPT_ID, collapse = '-'),
     NEW_MAPPED_CONCEPT_NAME = paste(CONCEPT_NAME, collapse = '-'),
@@ -112,7 +112,7 @@ newMapAgg <-
 oldMapAgg <-
   oldMap %>%
   arrange(CONCEPT_ID) %>%
-  group_by(COHORTID, CONCEPTSETNAME, CONCEPTSETID, ISEXCLUDED, INCLUDEDESCENDANTS, NODE_CONCEPT_ID, NODE_CONCEPT_NAME, SOURCE_CONCEPT_ID, RECORD_COUNT, ACTION,
+  group_by(COHORTID,COHORTNAME, CONCEPTSETNAME, CONCEPTSETID, ISEXCLUDED, INCLUDEDESCENDANTS, NODE_CONCEPT_ID, NODE_CONCEPT_NAME, SOURCE_CONCEPT_ID, RECORD_COUNT, ACTION,
            SOURCE_CONCEPT_NAME, SOURCE_VOCABULARY_ID, SOURCE_CONCEPT_CODE
   ) %>%
   summarise(
@@ -124,7 +124,7 @@ oldMapAgg <-
 
 #join oldMap and newMap where combination of target concepts are different
 mapDif <- oldMapAgg %>%
-  inner_join(newMapAgg, by = c("COHORTID", "CONCEPTSETNAME", "CONCEPTSETID", "ISEXCLUDED", "INCLUDEDESCENDANTS", "NODE_CONCEPT_ID", "NODE_CONCEPT_NAME", "SOURCE_CONCEPT_ID", "RECORD_COUNT", "ACTION")) %>%
+  inner_join(newMapAgg, by = c("COHORTID", "COHORTNAME", "CONCEPTSETNAME", "CONCEPTSETID", "ISEXCLUDED", "INCLUDEDESCENDANTS", "NODE_CONCEPT_ID", "NODE_CONCEPT_NAME", "SOURCE_CONCEPT_ID", "RECORD_COUNT", "ACTION")) %>%
   filter(if_else(is.na(OLD_MAPPED_CONCEPT_ID), '', OLD_MAPPED_CONCEPT_ID) != if_else(is.na(NEW_MAPPED_CONCEPT_ID), '', NEW_MAPPED_CONCEPT_ID))%>%
   arrange(desc(RECORD_COUNT))
 
@@ -133,9 +133,9 @@ mapDif <- oldMapAgg %>%
 #get the summaryTable - this table has cohortId and number of rows that have added or removed source concepts
 summaryTable <- DatabaseConnector::renderTranslateQuerySql(connection = conn,
                                             "--summary table
-select cohortid, action, sum (record_count) from #resolv_dif_sc
+select cohortid, cohortname, action, sum (record_count) from #resolv_dif_sc
 --if concept appears in different nodes, it will be counted several times, but for an evaluation it's probably ok
-group by cohortid, action
+group by cohortid,cohortname, action
 order by sum (record_count) desc", snakeCaseToCamelCase = T)
 
 #get the non-standard concepts used in concept set definitions

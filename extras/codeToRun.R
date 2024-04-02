@@ -28,7 +28,7 @@ ROhdsiWebApi::authorizeWebApi(
 #cohorts <-c(12822, 12824, 12825)
 
 #comment this if you want to run against the list above
-cohortsDF <- readr::read_delim("~/PhenotypeChangesInVocabUpdate/extras/Cohorts.csv", delim = "\t", show_col_types = FALSE)
+cohortsDF <- readr::read_delim("D:/PhenotypeChangesInVocabUpdateOHDSI/extras/2021Cohorts.csv", delim = ",", show_col_types = FALSE)
 cohorts <-cohortsDF[[1]]
 
 #excluded nodes is a text string with nodes you want to exclude from the analysis, it's set to 0 by default
@@ -59,32 +59,33 @@ cohorts <-cohortsDF[[1]]
  # )
 
 
-newVocabSchema <-'v20230116' #schema containing a new vocabulary version
-oldVocabSchema <-'v20220409' #schema containing an older vocabulary version
-resultSchema <-'jnj_network' #schema containing Achilles results
+newVocabSchema <-'v20240229' #schema containing a new vocabulary version
+#oldVocabSchema <-'v20230116' #schema containing an older vocabulary version for 2023 cohorts
+oldVocabSchema <-'v20220909' #schema containing an older vocabulary version for 2023 cohorts
+#resultSchema <-'jnj_network' #schema containing Achilles results
 
 excludedVisitNodes <- "9202, 2514435,9203,2514436,2514437,2514434,2514433,9201"
 
 #get the concept count table
-conn <- DatabaseConnector::connect(connectionDetailsCC)
+#conn <- DatabaseConnector::connect(connectionDetailsCC)
 
-achillesResultConceptCount <- DatabaseConnector::renderTranslateQuerySql(connection = conn,
-                                                         "select * from jnj_network.achilles_result_concept_count where concept_id <= 2147483647" # really big numbers excluded
-                                                         , snakeCaseToCamelCase = F)
+#achillesResultConceptCount <- DatabaseConnector::renderTranslateQuerySql(connection = conn,
+ #                                                        "select * from jnj_network.achilles_result_concept_count where concept_id <= 2147483647" # really big numbers excluded
+  #                                                       , snakeCaseToCamelCase = F)
 
-DatabaseConnector::disconnect(conn)
+#DatabaseConnector::disconnect(conn)
 
 
 #upload it to the vocabulary server
 conn <- DatabaseConnector::connect(connectionDetailsVocab)
 
-DatabaseConnector::insertTable(connection = conn,
-                               tableName = "#achilles_Result_CC",
-                               data = achillesResultConceptCount,
-                               dropTableIfExists = TRUE,
-                               createTable = TRUE,
-                               tempTable = TRUE,
-                               bulkLoad = TRUE)
+# DatabaseConnector::insertTable(connection = conn,
+#                                tableName = "scratch_ddymshyt.achilles_Result_CC",
+#                                data = achillesResultConceptCount,
+#                                dropTableIfExists = TRUE,
+#                                createTable = TRUE,
+#                                tempTable = F,
+#                                bulkLoad = TRUE)
 
 
 
@@ -103,7 +104,7 @@ resultToExcel(connectionDetailsVocab = connectionDetailsVocab,
 
 #open the excel file
 #Windows
-shell.exec("PhenChange.xlsx")
+shell.exec("PhenChange_2021cohorts.xlsx")
 
 #MacOS
-#system(paste("open", "PhenChange.xlsx"))
+#system(paste("open", "PhenChange_2021cohorts.xlsx"))

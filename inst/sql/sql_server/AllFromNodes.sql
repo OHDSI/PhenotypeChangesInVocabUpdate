@@ -1,13 +1,13 @@
 --2. get the Node concepts that became non-standard and show their replacements
 create table #non_st_Nodes as
-select cohortid, conceptsetname, conceptsetid, isexcluded, includedescendants ,
+select cohortid,cohortName, conceptsetname, conceptsetid, isexcluded, includedescendants ,
 cn.concept_id as Node_concept_id , cn.concept_name as node_concept_name , coalesce (aro.descendant_record_count, 0) as drc,
 cm.concept_id as maps_to_concept_id, cm.concept_name as maps_to_concept_name,
 cmv.concept_id as maps_to_value_concept_id, cmv.concept_name as maps_to_value_concept_name
 from #ConceptsInCohortSet s
 join @newVocabSchema.concept cn on cn.concept_id = s.conceptid and cn.standard_concept is null
---left join #achilles_result_cc aro on aro.concept_id = cn.concept_id
-left join #achilles_result_cc aro on aro.concept_id = cn.concept_id
+--left join scratch_ddymshyt.achilles_result_cc aro on aro.concept_id = cn.concept_id
+left join scratch_ddymshyt.achilles_result_cc aro on aro.concept_id = cn.concept_id
 left join @newVocabSchema.concept_relationship cr on cr.concept_id_1 = cn.concept_id and cr.relationship_id ='Maps to'
 left join @newVocabSchema.concept cm on cm.concept_id = cr.concept_id_2
 left join @newVocabSchema.concept_relationship crv on crv.concept_id_1 = cn.concept_id and crv.relationship_id ='Maps to value'
@@ -20,7 +20,7 @@ order by drc desc
 --old vocabulary vs new, target concept comparison
 create table #resolv_dif0  as
 with old_vc as (
-select cohortid, conceptsetname, conceptsetid, isexcluded, includedescendants ,
+select cohortid,cohortName, conceptsetname, conceptsetid, isexcluded, includedescendants ,
 cn.concept_id as Node_concept_id , cn.concept_name as node_concept_name , ca.descendant_concept_id
 from #ConceptsInCohortSet s
 join @oldVocabSchema.concept cn on cn.concept_id = s.conceptid
@@ -28,7 +28,7 @@ join @oldVocabSchema.concept_ancestor ca on ca.ancestor_concept_id = cn.concept_
 and ((includedescendants = 0 and ca.ancestor_concept_id = ca.descendant_concept_id ) or includedescendants != 0)
 and isexcluded = 0
 except
-select cohortid, conceptsetname, conceptsetid, isexcluded, includedescendants ,
+select cohortid, cohortName, conceptsetname, conceptsetid, isexcluded, includedescendants ,
 cn.concept_id as Node_concept_id , cn.concept_name as node_concept_name , ca.descendant_concept_id
 from #ConceptsInCohortSet s
 join @oldVocabSchema.concept cn on cn.concept_id = s.conceptid
@@ -38,7 +38,7 @@ and isexcluded = 1
 )
 ,
 new_vc as (
-select cohortid, conceptsetname, conceptsetid, isexcluded, includedescendants ,
+select cohortid, cohortName,conceptsetname, conceptsetid, isexcluded, includedescendants ,
 cn.concept_id as Node_concept_id , cn.concept_name as node_concept_name , ca.descendant_concept_id
 from #ConceptsInCohortSet s
 join @newVocabSchema.concept cn on cn.concept_id = s.conceptid
@@ -46,7 +46,7 @@ join @newVocabSchema.concept_ancestor ca on ca.ancestor_concept_id = cn.concept_
 and ((includedescendants = 0 and ca.ancestor_concept_id = ca.descendant_concept_id ) or includedescendants != 0)
 and isexcluded = 0
 except
-select cohortid, conceptsetname, conceptsetid, isexcluded, includedescendants ,
+select cohortid,cohortName, conceptsetname, conceptsetid, isexcluded, includedescendants ,
 cn.concept_id as Node_concept_id , cn.concept_name as node_concept_name , ca.descendant_concept_id
 from #ConceptsInCohortSet s
 join @newVocabSchema.concept cn on cn.concept_id = s.conceptid
@@ -71,17 +71,17 @@ RENAME descendant_concept_id TO concept_id
 ;
 create table #resolv_dif as
 with addexc as (
-select cohortid, conceptsetname, conceptsetid, concept_id from #resolv_dif0 a
-join #resolv_dif0 b using (cohortid, conceptsetname, conceptsetid, concept_id)
+select cohortid,cohortName, conceptsetname, conceptsetid, concept_id from #resolv_dif0 a
+join #resolv_dif0 b using (cohortid,cohortName, conceptsetname, conceptsetid, concept_id)
 where a.action ='Added' and b.action ='Removed'
 )
-select * from #resolv_dif0  where (cohortid, conceptsetname, conceptsetid, concept_id) not in (select * from addexc)
+select * from #resolv_dif0  where (cohortid,cohortName, conceptsetname, conceptsetid, concept_id) not in (select * from addexc)
 ;
 --aggregate output by peaks, the peak is a highest in a hierarchy amongs concepts added or removed
 create table #resolv_dif_peaks as
 -- concepts that are descendants to be excluded from the output
 with descnds as (
-select a.cohortid, a.conceptsetid, a.isexcluded, a.includedescendants ,
+select a.cohortid, a.cohortName,a.conceptsetid, a.isexcluded, a.includedescendants ,
  a.Node_concept_id , a.node_concept_name , b.concept_id, a.action
 from #resolv_dif a
 --concept_ancestor of the new vocab since the output will be used in cohort fix to be used with a NEW vocabulary
@@ -91,7 +91,7 @@ and a.cohortid = b.cohortid and a.conceptsetid = b.conceptsetid and a.node_conce
 and a.isexcluded = b.isexcluded and a.includedescendants = b.includedescendants
 where  an.ancestor_concept_id !=an.descendant_concept_id
 )
-select a.cohortid, a.conceptsetid, a.conceptsetname, a.isexcluded, a.includedescendants ,
+select a.cohortid, a.cohortName,a.conceptsetid, a.conceptsetname, a.isexcluded, a.includedescendants ,
  a.Node_concept_id , a.node_concept_name ,  a.action , a.concept_id as peak_concept_id,
  c.concept_name as peak_name, c.concept_code as peak_code , coalesce (aro.descendant_record_count , 0) as drc
   from #resolv_dif a
@@ -101,7 +101,7 @@ left join descnds d on a.cohortid = d.cohortid and a.conceptsetid = d.conceptset
 and a.isexcluded = d.isexcluded and a.includedescendants = d.includedescendants
 and a.action = d.action
 --add counts
-left join #achilles_result_cc aro on aro.concept_id = a.concept_id
+left join scratch_ddymshyt.achilles_result_cc aro on aro.concept_id = a.concept_id
 -- add concept information
 join @newVocabSchema.concept c on c.concept_id = a.concept_id
 where d.concept_id is null
@@ -110,7 +110,7 @@ where d.concept_id is null
 --old vocabulary vs new, source concept comparison
 create table #resolv_dif_sc0  as
 with old_vc as (
-select cohortid, conceptsetname, conceptsetid, isexcluded, includedescendants ,
+select cohortid, cohortName,conceptsetname, conceptsetid, isexcluded, includedescendants ,
 cn.concept_id as Node_concept_id , cn.concept_name as node_concept_name , ca.descendant_concept_id
 from #ConceptsInCohortSet s
 join @oldVocabSchema.concept cn on cn.concept_id = s.conceptid
@@ -118,7 +118,7 @@ join @oldVocabSchema.concept_ancestor ca on ca.ancestor_concept_id = cn.concept_
 and ((includedescendants = 0 and ca.ancestor_concept_id = ca.descendant_concept_id ) or includedescendants != 0)
 and isexcluded = 0
 except
-select cohortid, conceptsetname, conceptsetid, isexcluded, includedescendants ,
+select cohortid,cohortName, conceptsetname, conceptsetid, isexcluded, includedescendants ,
 cn.concept_id as Node_concept_id , cn.concept_name as node_concept_name , ca.descendant_concept_id
 from #ConceptsInCohortSet s
 join @oldVocabSchema.concept cn on cn.concept_id = s.conceptid
@@ -128,14 +128,14 @@ and isexcluded = 1
 )
 ,
 old_vc_map as (
-select cohortid, conceptsetname, conceptsetid, isexcluded, includedescendants ,
+select cohortid,cohortName, conceptsetname, conceptsetid, isexcluded, includedescendants ,
  Node_concept_id , node_concept_name, r.concept_id_2 as source_concept_id
  from old_vc
 join @oldVocabSchema.concept_relationship r on descendant_concept_id = r.concept_id_1 and r.relationship_id ='Mapped from'
 )
 ,
 new_vc as (
-select cohortid, conceptsetname, conceptsetid, isexcluded, includedescendants ,
+select cohortid, cohortName,conceptsetname, conceptsetid, isexcluded, includedescendants ,
 cn.concept_id as Node_concept_id , cn.concept_name as node_concept_name , ca.descendant_concept_id
 from #ConceptsInCohortSet s
 join @newVocabSchema.concept cn on cn.concept_id = s.conceptid
@@ -143,7 +143,7 @@ join @newVocabSchema.concept_ancestor ca on ca.ancestor_concept_id = cn.concept_
 and ((includedescendants = 0 and ca.ancestor_concept_id = ca.descendant_concept_id ) or includedescendants != 0)
 and isexcluded = 0
 except
-select cohortid, conceptsetname, conceptsetid, isexcluded, includedescendants ,
+select cohortid,cohortName, conceptsetname, conceptsetid, isexcluded, includedescendants ,
 cn.concept_id as Node_concept_id , cn.concept_name as node_concept_name , ca.descendant_concept_id
 from #ConceptsInCohortSet s
 join @newVocabSchema.concept cn on cn.concept_id = s.conceptid
@@ -152,7 +152,7 @@ and ((includedescendants = 0 and ca.ancestor_concept_id = ca.descendant_concept_
 and isexcluded = 1
 ),
 new_vc_map as (
-select cohortid, conceptsetname, conceptsetid, isexcluded, includedescendants ,
+select cohortid,cohortName, conceptsetname, conceptsetid, isexcluded, includedescendants ,
  Node_concept_id , node_concept_name, r.concept_id_2 as source_concept_id
  from new_vc
 join @newVocabSchema.concept_relationship r on descendant_concept_id = r.concept_id_1 and r.relationship_id ='Mapped from'
@@ -173,12 +173,12 @@ select * from old_vc_map
 --filtering by node concept or by source concepts
 create table #resolv_dif_sc as
 with addexc as (
-select cohortid, conceptsetname, conceptsetid, source_concept_id from #resolv_dif_sc0 a
-join #resolv_dif_sc0 b using (cohortid, conceptsetname, conceptsetid, source_concept_id)
+select cohortid, cohortName,conceptsetname, conceptsetid, source_concept_id from #resolv_dif_sc0 a
+join #resolv_dif_sc0 b using (cohortid, cohortName, conceptsetname, conceptsetid, source_concept_id)
 where a."action" ='Added' and b."action" ='Removed'
 )
 select dif.*, sc.record_count  from #resolv_dif_sc0 dif
-join #achilles_result_cc sc on dif.source_concept_id = sc.concept_id
+join scratch_ddymshyt.achilles_result_cc sc on dif.source_concept_id = sc.concept_id
 /* -- excessive functionality
 --allows to exlude by node concept
 left join #excl_node en using (node_concept_id)
@@ -193,7 +193,7 @@ c.vocabulary_id = sr.vocabulary_id and sr.domain_id = c.domain_id and rule_name 
 or c.vocabulary_id = sr.vocabulary_id and sr.domain_id = c.domain_id and rule_name in ('exc_or', 'inc_or')
 )
 */
-where (cohortid, conceptsetname, conceptsetid, dif.source_concept_id) not in (select * from addexc)
+where (cohortid, cohortName, conceptsetname, conceptsetid, dif.source_concept_id) not in (select * from addexc)
 and node_concept_id not in (@excludedNodes)
 /*
 --part of source concept filter
@@ -209,7 +209,7 @@ and en.node_concept_id is null
 -- listagg and join of this and #newmap table will be done in R
 create table #oldmap as
 with aaa as (select 1 as test)
-select cohortid, conceptsetname, conceptsetid, isexcluded, includedescendants, node_concept_id, node_concept_name, action, record_count,
+select cohortid,cohortName, conceptsetname, conceptsetid, isexcluded, includedescendants, node_concept_id, node_concept_name, action, record_count,
 source_concept_id, cs.concept_name as source_concept_name, cs.vocabulary_id as source_vocabulary_id, cs.concept_code as source_concept_code,
 c.concept_id , c.concept_name, c.vocabulary_id, c.concept_code
 from #resolv_dif_sc dif
@@ -229,7 +229,7 @@ left join @newVocabSchema.concept c on c.concept_id = cr.concept_id_2
 --old vocabulary vs new, target concept comparison
 create table #resolv_dom_dif  as
 with old_vc as (
-select cohortid, conceptsetname, conceptsetid, isexcluded, includedescendants ,
+select cohortid, cohortName,conceptsetname, conceptsetid, isexcluded, includedescendants ,
 cn.concept_id as Node_concept_id , cn.concept_name as node_concept_name , ca.descendant_concept_id
 from #ConceptsInCohortSet s
 join @oldVocabSchema.concept cn on cn.concept_id = s.conceptid
@@ -237,7 +237,7 @@ join @oldVocabSchema.concept_ancestor ca on ca.ancestor_concept_id = cn.concept_
 and ((includedescendants = 0 and ca.ancestor_concept_id = ca.descendant_concept_id ) or includedescendants != 0)
 and isexcluded = 0
 except
-select cohortid, conceptsetname, conceptsetid, isexcluded, includedescendants ,
+select cohortid,cohortName, conceptsetname, conceptsetid, isexcluded, includedescendants ,
 cn.concept_id as Node_concept_id , cn.concept_name as node_concept_name , ca.descendant_concept_id
 from #ConceptsInCohortSet s
 join @oldVocabSchema.concept cn on cn.concept_id = s.conceptid
@@ -247,7 +247,7 @@ and isexcluded = 1
 )
 ,
 new_vc as (
-select cohortid, conceptsetname, conceptsetid, isexcluded, includedescendants ,
+select cohortid, cohortName,conceptsetname, conceptsetid, isexcluded, includedescendants ,
 cn.concept_id as Node_concept_id , cn.concept_name as node_concept_name , ca.descendant_concept_id
 from #ConceptsInCohortSet s
 join @newVocabSchema.concept cn on cn.concept_id = s.conceptid
@@ -255,7 +255,7 @@ join @newVocabSchema.concept_ancestor ca on ca.ancestor_concept_id = cn.concept_
 and ((includedescendants = 0 and ca.ancestor_concept_id = ca.descendant_concept_id ) or includedescendants != 0)
 and isexcluded = 0
 except
-select cohortid, conceptsetname, conceptsetid, isexcluded, includedescendants ,
+select cohortid,cohortName, conceptsetname, conceptsetid, isexcluded, includedescendants ,
 cn.concept_id as Node_concept_id , cn.concept_name as node_concept_name , ca.descendant_concept_id
 from #ConceptsInCohortSet s
 join @newVocabSchema.concept cn on cn.concept_id = s.conceptid
@@ -263,7 +263,7 @@ join @newVocabSchema.concept_ancestor ca on ca.ancestor_concept_id = cn.concept_
 and ((includedescendants = 0 and ca.ancestor_concept_id = ca.descendant_concept_id ) or includedescendants != 0)
 and isexcluded = 1
 )
-select cohortid, conceptsetname, conceptsetid, isexcluded, includedescendants ,
+select cohortid, cohortName,conceptsetname, conceptsetid, isexcluded, includedescendants ,
  Node_concept_id ,  node_concept_name,
  cn.concept_id , cn.concept_name , cn.vocabulary_id , cn.concept_code , co.domain_id as old_domain_id, cn.domain_id as new_domain_id,
  aro.descendant_record_count as drc
@@ -274,6 +274,6 @@ select * from new_vc
 ) a
 join @oldVocabSchema.concept co on co.concept_id =descendant_concept_id
 join @newVocabSchema.concept cn on cn.concept_id =descendant_concept_id
-left join #achilles_result_cc aro on aro.concept_id = cn.concept_id
+left join scratch_ddymshyt.achilles_result_cc aro on aro.concept_id = cn.concept_id
 where co.domain_id != cn.domain_id
 ;
