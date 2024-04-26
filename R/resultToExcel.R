@@ -21,6 +21,7 @@
 #' @param oldVocabSchema        schema containing an older vocabulary version
 #' @param resultSchema          schema containing Achilles results
 #' @param excludedNodes         text string with excluded nodes, for example: "9201, 9202, 9203"; 0 by default
+#' @param includedSourceVocabs  text string with included source vocabularies, for example: "ICD10CM, ICD9CM, HCPCS"; 0 by default
 #'
 #' @examples
 #' \dontrun{
@@ -38,7 +39,8 @@ resultToExcel <-function( connectionDetailsVocab,
                           newVocabSchema,
                           oldVocabSchema,
                           resultSchema,
-                          excludedNodes = 0 )
+                          excludedNodes = 0,
+						  includedSourceVocabs =0)
 {
   #use databaseConnector to run SQL and extract tables into data frames
 
@@ -70,7 +72,8 @@ resultToExcel <-function( connectionDetailsVocab,
                                                 newVocabSchema=newVocabSchema,
                                                 oldVocabSchema= oldVocabSchema,
                                                 resultSchema = resultSchema,
-                                                excludedNodes = excludedNodes
+                                                excludedNodes = excludedNodes,
+												includedSourceVocabs = includedSourceVocabs
   )
 
   #get SQL tables into dataframes

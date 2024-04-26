@@ -15,7 +15,7 @@ library (DatabaseConnector)
 library (PhenotypeChangesInVocabUpdate)
 
 #set the BaseUrl of your Atlas instance
-baseUrl <- "https://yourSecureAtlas.ohdsi.org/"
+#baseUrl <- "https://yourSecureAtlas.ohdsi.org/"
 
 # if security is enabled authorize use of the webapi
 ROhdsiWebApi::authorizeWebApi(
@@ -26,10 +26,10 @@ ROhdsiWebApi::authorizeWebApi(
 #specify cohorts you want to run the comparison for, in my example I import it from the CSV with one column containing cohortIds
 #the example file is located in "~/PhenotypeChangesInVocabUpdate/extras/Cohorts.csv"
 # also you can define the cohorts as vector directly:
-#cohorts <-c(14966) 
+#cohorts <-c(14966)
 
 #comment this if you want to run against the list above
-cohortsDF <- readr::read_delim("D:/PhenotypeChangesInVocabUpdateOHDSI/extras/Cohorts.csv.csv", delim = ",", show_col_types = FALSE)
+cohortsDF <- readr::read_delim("D:/PhenotypeChangesInVocabUpdateOHDSI/extras/Cohorts.csv", delim = ",", show_col_types = FALSE)
 cohorts <-cohortsDF[[1]]
 
 #excluded nodes is a text string with nodes you want to exclude from the analysis, it's set to 0 by default
@@ -38,6 +38,10 @@ cohorts <-cohortsDF[[1]]
 #this way, the excludedNodes are defined in this way:
 excludedVisitNodes <- "9202, 2514435,9203,2514436,2514437,2514434,2514433,9201"
 
+#you can restrict the output by using specific source vocabularies (only those that exist in your data as source concepts)
+includedSourceVocabs <- "'ICD10', 'ICD10CM', 'CPT4', 'HCPCS', 'NDC', 'ICD9CM', 'ICD9Proc', 'ICD10PCS', 'ICDO3', 'JMDC'"
+
+
 
 #set connectionDetails,
 #you can use keyring to store your credentials,
@@ -45,16 +49,16 @@ excludedVisitNodes <- "9202, 2514435,9203,2514436,2514437,2514434,2514433,9201"
 
 # you can also define connectionDetails directly, see the DatabaseConnector documentation https://ohdsi.github.io/DatabaseConnector/
 
- connectionDetailsVocab = DatabaseConnector::createConnectionDetails(
-   dbms = keyring::key_get("YourDatabase", "dbms" ),
-   connectionString = keyring::key_get("YourDatabase", "connectionString"),
-   user = keyring::key_get("YourDatabase", "username"),
-   password = keyring::key_get("YourDatabase", "password" )
- )
+ # connectionDetailsVocab = DatabaseConnector::createConnectionDetails(
+ #   dbms = keyring::key_get("YourDatabase", "dbms" ),
+ #   connectionString = keyring::key_get("YourDatabase", "connectionString"),
+ #   user = keyring::key_get("YourDatabase", "username"),
+ #   password = keyring::key_get("YourDatabase", "password" )
+ # )
 
 #specify schemas with vocabulary versions you want to compare
 newVocabSchema <-'v20240229' #schema containing a new vocabulary version
-oldVocabSchema <-'v20220909' #schema containing an older vocabulary 
+oldVocabSchema <-'v20220909' #schema containing an older vocabulary
 
 
 #get the concept count table
@@ -73,7 +77,7 @@ resultToExcel(connectionDetailsVocab = connectionDetailsVocab,
               Concepts_in_cohortSet = Concepts_in_cohortSet,
               newVocabSchema = newVocabSchema,
               oldVocabSchema = oldVocabSchema,
-              excludedNodes = excludedVisitNodes
+              excludedNodes = excludedVisitNodes,
               resultSchema = resultSchema
 )
 
@@ -82,4 +86,4 @@ resultToExcel(connectionDetailsVocab = connectionDetailsVocab,
 shell.exec("PhenChange.xlsx")
 
 #MacOS
-#system(paste("open", "PhenChange_2021cohorts.xlsx"))
+#system(paste("open", "PhenChange.xlsx"))

@@ -40,7 +40,7 @@ join @newVocabSchema.concept cn on cn.concept_id = s.conceptid
 join @newVocabSchema.concept_ancestor ca on ca.ancestor_concept_id = cn.concept_id
 and ((includedescendants = 0 and ca.ancestor_concept_id = ca.descendant_concept_id ) or includedescendants != 0)
 and isexcluded = 0
---exclude visits nodes, !!! need to make it as an variable
+--exclude specific nodes from analysis
 and s.conceptid not in (@excludedNodes)
 except
 select cohortid,cohortName, conceptsetname, conceptsetid , ca.descendant_concept_id
@@ -89,7 +89,7 @@ left join @oldVocabSchema.concept_relationship cr on cr.concept_id_1 = dif.sourc
 left join @oldVocabSchema.concept c on c.concept_id = cr.concept_id_2
 join @resultSchema.achilles_result_cc arc on arc.concept_id = cs.concept_id 
 --look only at specific vocabularies that used by our data
-where cs.vocabulary_id in ('ICD10', 'ICD10CM', 'CPT4', 'HCPCS', 'NDC', 'ICD9CM', 'ICD9Proc', 'ICD10PCS', 'ICDO3', 'JMDC')
+{@includedSourceVocabs !=0} ? {where cs.vocabulary_id in (@includedSourceVocabs)}
 ;
 --append mappings to see difference in source concepts, new vocabulary version
 create table #newmap as
@@ -120,5 +120,5 @@ join @newVocabSchema.concept_relationship cr on cr.relationship_id ='Mapped from
 join @newVocabSchema.concept cs on cs.concept_id = cr.concept_id_2
 left join @resultSchema.achilles_result_cc aro on aro.concept_id = cs.concept_id
 where co.domain_id != cn.domain_id
-and cs.vocabulary_id in ('ICD10', 'ICD10CM', 'CPT4', 'HCPCS', 'NDC', 'ICD9CM', 'ICD9Proc', 'ICD10PCS', 'ICDO3', 'JMDC')
+{@includedSourceVocabs !=0}? {and cs.vocabulary_id in (@includedSourceVocabs)}
 ;
