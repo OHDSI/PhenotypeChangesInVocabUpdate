@@ -6,6 +6,7 @@
 #remotes::install_github("OHDSI/PhenotypeChangesInVocabUpdate")
 #remotes::install_github("OHDSI/DatabaseConnector")
 
+remotes::install_github("OHDSI/PhenotypeChangesInVocabUpdate")
 
 library (dplyr)
 library (openxlsx)
@@ -23,14 +24,9 @@ ROhdsiWebApi::authorizeWebApi(
   authMethod = "windows")
 
 
-#specify cohorts you want to run the comparison for, in my example I import it from the CSV with one column containing cohortIds
-#the example file is located in "~/PhenotypeChangesInVocabUpdate/extras/Cohorts.csv"
-# also you can define the cohorts as vector directly:
-#cohorts <-c(14966)
-
-#comment this if you want to run against the list above
-cohortsDF <- readr::read_delim("D:/PhenotypeChangesInVocabUpdateOHDSI/extras/Cohorts.csv", delim = ",", show_col_types = FALSE)
-cohorts <-cohortsDF[[1]]
+# specify cohorts you want to run the comparison for
+# you can define the cohorts as vector:
+cohorts <-c(1, 2, 3)
 
 #excluded nodes is a text string with nodes you want to exclude from the analysis, it's set to 0 by default
 # for example now some CPT4 and HCPCS are mapped to Visit concepts and we didn't implement this in the ETL,

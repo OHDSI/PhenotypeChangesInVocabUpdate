@@ -2,11 +2,9 @@
 #'
 #' @description This function resolves concept sets in a SQL database
 #' it uses an input of \code{getNodeConcepts()} funcion,
-#' it detects non-standard concepts used in concept set expression;
-#' also detects the changes in included concepts due to a vocabulary version change:
-#' 1) added or excluded source concepts due to changed mapping to standard concepts
-#' 2) added or excluded standard concepts due to hierarchy changes, only the "peak concepts" are shown
-#'  "peak concept" is a concept above which the hierarchy is altered
+#' it detects
+#' 1) non-standard concepts used in concept set expression;
+#' 2) added or excluded source concepts due to changed mapping to standard concepts
 #' 3) domain changes of included standard concepts
 #' The result is written to an excel file with the tab for each check
 #'
@@ -21,7 +19,7 @@
 #' @param oldVocabSchema        schema containing an older vocabulary version
 #' @param resultSchema          schema containing Achilles results
 #' @param excludedNodes         text string with excluded nodes, for example: "9201, 9202, 9203"; 0 by default
-#' @param includedSourceVocabs  text string with included source vocabularies, for example: "ICD10CM, ICD9CM, HCPCS"; 0 by default
+#' @param includedSourceVocabs  text string with included source vocabularies, for example: "'ICD10CM', 'ICD9CM', 'HCPCS'"; 0 by default, which is treated as ALL vocabularies
 #'
 #' @examples
 #' \dontrun{
