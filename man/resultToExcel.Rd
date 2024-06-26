@@ -5,19 +5,16 @@
 \title{This function resolves concept sets in a SQL database and writes the result to the Excel file}
 \usage{
 resultToExcel(
-  connectionDetails,
+  connectionDetailsVocab,
   Concepts_in_cohortSet,
   newVocabSchema,
   oldVocabSchema,
   resultSchema,
-  excludedNodes = 0
+  excludedNodes = 0,
+  includedSourceVocabs = 0
 )
 }
 \arguments{
-\item{connectionDetails}{An R object of type\cr\code{connectionDetails} created using the
-function \code{createConnectionDetails} in the
-\code{DatabaseConnector} package.}
-
 \item{Concepts_in_cohortSet}{dataframe which stores cohorts and concept set definitions in a tabular format,
 it should have the following columns:
 "ConceptID","isExcluded","includeDescendants","conceptsetId","conceptsetName","cohortId"}
@@ -29,27 +26,19 @@ it should have the following columns:
 \item{resultSchema}{schema containing Achilles results}
 
 \item{excludedNodes}{text string with excluded nodes, for example: "9201, 9202, 9203"; 0 by default}
-}
-\value{
-Writes an Excel file to disk. The Excel file has the following tabs:
-   summaryTable: Contains ... Each row represents ..., and the columns have the following meanings:
-     Column1: ...
-     Column2: ...
-  nonStNodes: Contains ... Each row represents ..., and the columns have the following meanings:
-     Column1: ...
-     Column2: ...
-   mapDif
 
-Interpretation of this file should ...
+\item{includedSourceVocabs}{text string with included source vocabularies, for example: "'ICD10CM', 'ICD9CM', 'HCPCS'"; 0 by default, which is treated as ALL vocabularies}
+
+\item{connectionDetails}{An R object of type\cr\code{connectionDetails} created using the
+function \code{createConnectionDetails} in the
+\code{DatabaseConnector} package.}
 }
 \description{
 This function resolves concept sets in a SQL database
-it uses an input of #' getNodeConcepts() funcion,
-it detects non-standard concepts used in concept set expression;
-also detects the changes in included concepts due to a vocabulary version change:
-1) added or excluded source concepts due to changed mapping to standard concepts
-2) added or excluded standard concepts due to hierarchy changes, only the "peak concepts" are shown
- "peak concept" is a concept above which the hierarchy is altered
+it uses an input of \code{getNodeConcepts()} funcion,
+it detects
+1) non-standard concepts used in concept set expression;
+2) added or excluded source concepts due to changed mapping to standard concepts
 3) domain changes of included standard concepts
 The result is written to an excel file with the tab for each check
 }

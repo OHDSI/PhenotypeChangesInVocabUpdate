@@ -16,6 +16,7 @@
 #' }
 #' @export
 
+
 getNodeConcepts <- function(cohorts, baseUrl)
 {
 
@@ -34,6 +35,8 @@ for (cohortDefinitionId in cohorts) {
   tryCatch({
     cohortDefinition <- ROhdsiWebApi::getCohortDefinition(cohortDefinitionId, baseUrl)
     cohortDefinitionExpression <- cohortDefinition$expression
+    createdDate <- cohortDefinition$createdDate
+    cohortName<-cohortDefinition$name
     conceptsetList <- cohortDefinitionExpression$ConceptSets
 
     # skip any cohort definition that has no concept sets
@@ -84,6 +87,8 @@ for (cohortDefinitionId in cohorts) {
     #bind with previous run
     t2<-Concepts_in_cohort
     t2$cohortId<-cohortDefinitionId
+    t2$cohortName<-cohortName
+    t2$createdDate<-createdDate
     Concepts_in_cohortSet<-rbind(Concepts_in_cohortSet, t2)
   }
 #trycatch argument what to do in error
