@@ -1,9 +1,13 @@
-#' This function resolves concept sets in a SQL database and writes the result to the Excel file
+#' CompareCohorts
 #'
-#' @description This function resolves concept sets in a SQL database
+#' This function resolves concept sets of two cohorts run on different vocabulary versions and writes the result to the Excel file
+#'
+#' @description This function resolves concept sets of two cohorts run on different vocabulary versions and writes the result to the Excel file
 #' it uses an input of \code{getNodeConcepts()} funcion,
 #' it detects
+#' for the updated cohort definition run on a new vocabulary
 #' 1) non-standard concepts used in concept set expression;
+#' for the old cohort definition run on an old vocabulary vs updated cohort definition run on a new vocabulary:
 #' 2) added or excluded source concepts due to changed mapping to standard concepts
 #' 3) domain changes of included standard concepts
 #' The result is written to an excel file with the tab for each check
@@ -12,9 +16,14 @@
 #' @param connectionDetails An R object of type\cr\code{connectionDetails} created using the
 #'                                     function \code{createConnectionDetails} in the
 #'                                     \code{DatabaseConnector} package.
-#' @param Concepts_in_cohortSet dataframe which stores cohorts and concept set definitions in a tabular format,
-#'                              it should have the following columns:
-#'                              "ConceptID","isExcluded","includeDescendants","conceptsetId","conceptsetName","cohortId"
+#' @param Concepts_in_cohortSetOldCht old cohort definition run on an old vocabulary -
+#'                                    dataframe which stores cohorts and concept set definitions in a tabular format,
+#'                                    it should have the following columns:
+#'                                    "ConceptID","isExcluded","includeDescendants","conceptsetId","conceptsetName","cohortId"
+#' @param Concepts_in_cohortSetNewCht updated cohort definition run on a new vocabulary -
+#'                                    dataframe which stores cohorts and concept set definitions in a tabular format,
+#'                                    it should have the following columns:
+#'                                    "ConceptID","isExcluded","includeDescendants","conceptsetId","conceptsetName","cohortId"
 #' @param newVocabSchema        schema containing a new vocabulary version
 #' @param oldVocabSchema        schema containing an older vocabulary version
 #' @param resultSchema          schema containing Achilles results
@@ -23,17 +32,21 @@
 #'
 #' @examples
 #' \dontrun{
-#'  resultToExcel(connectionDetails = YourconnectionDetails,
-#'  Concepts_in_cohortSet = Concepts_in_cohortSet, # is returned by getNodeConcepts function
-#'  newVocabSchema = "omopVocab_v1", #schema containing newer vocabulary version
-#'  oldVocabSchema = "omopVocab_v0", #schema containing older vocabulary version
-#'  resultSchema = "achillesresults") #schema with achillesresults
+#'                              CompareCohorts(connectionDetailsVocab = connectionDetailsVocab,
+#'                                            cohorts = cohorts,
+#'                                            Concepts_in_cohortSetOldCht = Concepts_in_cohortSetOldCht,
+#'                                            Concepts_in_cohortSetNewCht = Concepts_in_cohortSetNewCht,
+#'                                            newVocabSchema = newVocabSchema,
+#'                                            oldVocabSchema = oldVocabSchema,
+#'                                            excludedNodes = excludedVisitNodes,
+#'                                            resultSchema = resultSchema)
+#'
 #' }
 #' @export
 
 
 CompareCohorts <-function( connectionDetailsVocab,
-                           cohorts, # contains old and new cohorts, old withing 1 vocab version, new within another vocab version
+                           cohorts, # contains old and new cohorts, old run on the old vocab version, new to be run on another vocab version
                            Concepts_in_cohortSetOldCht,
                            Concepts_in_cohortSetNewCht,
                           newVocabSchema,
@@ -76,8 +89,8 @@ CompareCohorts <-function( connectionDetailsVocab,
 
 
   # read SQL from file
-# !  pathToSql <- system.file("sql/sql_server", "AllFromNodes_updated_cohorts.sql", package = "PhenotypeChangesInVocabUpdate") # remove this comment when testing is done
-  pathToSql <- 'D:/PhenotypeChangesInVocabUpdateOHDSI/inst/sql/sql_server/AllFromNodes_updated_cohorts.sql'
+ pathToSql <- system.file("sql/sql_server", "AllFromNodes_updated_cohorts.sql", package = "PhenotypeChangesInVocabUpdate")
+
 
   InitSql <- read_file(pathToSql)
 
@@ -130,6 +143,7 @@ CompareCohorts <-function( connectionDetailsVocab,
       OLD_MAPPED_CONCEPT_CODE = paste(CONCEPT_CODE, collapse = '-')
     )
 
+
   #join oldMap and newMap where combination of target concepts are different
   mapDif <- oldMapAgg %>%
     inner_join(newMapAgg, by = c("COHORTID", "CONCEPTSETNAME", "CONCEPTSETID", "SOURCE_CONCEPT_ID", "ACTION")) %>%
@@ -139,6 +153,11 @@ CompareCohorts <-function( connectionDetailsVocab,
   #append new cohort ids for the easier review
   mapDif <- mapDif %>%
     inner_join (phenotypeUpdates, by = c("COHORTID" = "old_cohort_id"))
+
+  #get the non-standard concepts used in concept set definitions
+  nonStNodes <- DatabaseConnector::renderTranslateQuerySql(connection = conn,
+                                                           "select * from #non_st_Nodes
+order by drc desc", snakeCaseToCamelCase = T) # to evaluate the best way of naming
 
   #get the standard concepts changed domains and their mapped counterparts
   domainChange <-DatabaseConnector::renderTranslateQuerySql(connection = conn,
@@ -154,6 +173,8 @@ CompareCohorts <-function( connectionDetailsVocab,
   # put the results in excel, each dataframe goes to a separate tab
   wb <- createWorkbook()
 
+  addWorksheet(wb, "nonStNodes")
+  writeData(wb, "nonStNodes", nonStNodes)
 
   addWorksheet(wb, "mapDif")
   writeData(wb, "mapDif", mapDif)
@@ -161,5 +182,5 @@ CompareCohorts <-function( connectionDetailsVocab,
   addWorksheet(wb, "domainChange")
   writeData(wb, "domainChange", domainChange)
 
-  saveWorkbook(wb, "PhenChange.xlsx", overwrite = TRUE)
+  saveWorkbook(wb, "CohortDif.xlsx", overwrite = TRUE)
 }

@@ -3,10 +3,8 @@
 ######################################
 
 # install libraries, if not installed
-#remotes::install_github("OHDSI/PhenotypeChangesInVocabUpdate")
 #remotes::install_github("OHDSI/DatabaseConnector")
-
-remotes::install_github("OHDSI/PhenotypeChangesInVocabUpdate")
+#remotes::install_github("OHDSI/PhenotypeChangesInVocabUpdate")
 
 library (dplyr)
 library (openxlsx)
@@ -24,12 +22,9 @@ ROhdsiWebApi::authorizeWebApi(
   authMethod = "windows")
 
 
-# specify cohorts you want to run the comparison for
-# you can define the cohorts as vector:
-#cohorts <-c(1, 2, 3)
-
 # specify the old and updated cohorts you want to compare
-phenotypeUpdates <-read.csv('D:/work/R projects/various/phenotype_updates.csv')
+# this table should have old_cohort_id, new_cohort_id columns with old cohort id and its updated version id
+phenotypeUpdates <-read.csv('phenotype_updates.csv')
 
 #excluded nodes is a text string with nodes you want to exclude from the analysis, it's set to 0 by default
 # for example now some CPT4 and HCPCS are mapped to Visit concepts and we didn't implement this in the ETL,
@@ -39,8 +34,6 @@ excludedVisitNodes <- "9202, 2514435,9203,2514436,2514437,2514434,2514433,9201"
 
 #you can restrict the output by using specific source vocabularies (only those that exist in your data as source concepts)
 includedSourceVocabs <- "'ICD10', 'ICD10CM', 'CPT4', 'HCPCS', 'NDC', 'ICD9CM', 'ICD9Proc', 'ICD10PCS', 'ICDO3', 'JMDC'"
-
-
 
 
 #set connectionDetails,
@@ -76,8 +69,10 @@ Concepts_in_cohortSetNewCht<-getNodeConcepts(cohorts$new_cohort_id, baseUrl)
 
 #resolve concept sets, compare the outputs on different vocabulary versions, write results to the Excel file
 #for Redshift ask your administrator for a key for bulk load, since the function uploads the data to the database
-resultToExcel(connectionDetailsVocab = connectionDetailsVocab,
-              Concepts_in_cohortSet = Concepts_in_cohortSet,
+PhenotypeChangesInVocabUpdate::CompareCohorts(connectionDetailsVocab = connectionDetailsVocab,
+                                              cohorts = cohorts,
+              Concepts_in_cohortSetOldCht = Concepts_in_cohortSetOldCht,
+               Concepts_in_cohortSetNewCht = Concepts_in_cohortSetNewCht,
               newVocabSchema = newVocabSchema,
               oldVocabSchema = oldVocabSchema,
               excludedNodes = excludedVisitNodes,
@@ -86,7 +81,7 @@ resultToExcel(connectionDetailsVocab = connectionDetailsVocab,
 
 #open the excel file
 #Windows
-shell.exec("PhenChange.xlsx")
+shell.exec("CohortDif.xlsx")
 
 #MacOS
-#system(paste("open", "PhenChange.xlsx"))
+#system(paste("open", "CohortDif.xlsx"))

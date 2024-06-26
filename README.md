@@ -413,3 +413,7 @@ To show how these concepts are connected to actual events, source codes with the
    </td>
   </tr>
 </table>
+
+## Checking updated cohorts
+### After you created updated versions of cohorts in Atlas, to check if the new cohort on a new vocabulary is resolved in the same way as the old one on the old vocabulary you need to run the "compareCohorts" funcion, it will give result similar to the "PhenChange.xlsx", but two cohorts on two vocabulary versions will be compared
+### see example of the code to run in "extras/codeToRunCheckResults.R""
