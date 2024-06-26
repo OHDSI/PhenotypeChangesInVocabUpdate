@@ -1,3 +1,18 @@
+--1. get the Node concepts that became non-standard and show their replacements
+create table #non_st_Nodes as
+select cohortid,cohortName, conceptsetname, conceptsetid, isexcluded, includedescendants ,
+cn.concept_id as Node_concept_id , cn.concept_name as node_concept_name , coalesce (aro.descendant_record_count, 0) as drc,
+cm.concept_id as maps_to_concept_id, cm.concept_name as maps_to_concept_name,
+cmv.concept_id as maps_to_value_concept_id, cmv.concept_name as maps_to_value_concept_name
+from #ConceptsInCohortSetNew s
+join @newVocabSchema.concept cn on cn.concept_id = s.conceptid and cn.standard_concept is null
+left join @resultSchema.achilles_result_cc aro on aro.concept_id = cn.concept_id
+left join @newVocabSchema.concept_relationship cr on cr.concept_id_1 = cn.concept_id and cr.relationship_id ='Maps to'
+left join @newVocabSchema.concept cm on cm.concept_id = cr.concept_id_2
+left join @newVocabSchema.concept_relationship crv on crv.concept_id_1 = cn.concept_id and crv.relationship_id ='Maps to value'
+left join @newVocabSchema.concept cmv on cmv.concept_id = crv.concept_id_2
+order by drc desc
+;
 --1. look at the mapping difference between old cohort on old vocabulary VS new cohort on a new vocabulary
 --old vocabulary vs new, source concept comparison
 create table #old_vc as
@@ -7,7 +22,7 @@ join @oldVocabSchema.concept cn on cn.concept_id = s.conceptid
 join @oldVocabSchema.concept_ancestor ca on ca.ancestor_concept_id = cn.concept_id
 and ((includedescendants = 0 and ca.ancestor_concept_id = ca.descendant_concept_id ) or includedescendants != 0)
 and isexcluded = 0
---exclude visits nodes, !!! need to make it as an variable
+--exclude visits nodes
 and s.conceptid not in (@excludedNodes)
 except
 select cohortid, conceptsetname, conceptsetid , ca.descendant_concept_id
