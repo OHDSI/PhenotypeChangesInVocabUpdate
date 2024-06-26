@@ -1,5 +1,15 @@
 # Utility to compare cohorts run in different vocabulary versions by resolving their concept sets
-### Compares source codes captured, hierarchy changes and domain changes; identifies Non-standard concepts used in concept set expressions
+### Identifies Non-standard concepts used in concept set expressions, compares source codes captured and domain changes among included concepts; 
+
+## Prerequisites: 
+### 1. schemas with:
+- Vocabulary (OHDSI standardized vocabularies) version the cohort were initially created on
+- Vocabulary version you are going to migrate
+- achilles_count_cc table (resultSchema)
+This table is generated on top of Achilles results, see how to generate it here:
+https://github.com/OHDSI/WebAPI/blob/master/src/main/resources/ddl/achilles/achilles_result_concept_count.sql
+
+### 2. Active Atlas intance with cohorts instantiated (you don't need to run them - just create/import cohorts in Atlas)
 
 ## Step by Step Example
 
@@ -23,27 +33,26 @@ ROhdsiWebApi::authorizeWebApi(
   baseUrl = baseUrl,
   authMethod = "windows")
 
-#specify cohorts you want to run the comparison for, in my example I import it from the CSV with one column containing cohortIds
-#the example file is located in "~/PhenotypeChangesInVocabUpdate/extras/Cohorts.csv"
-# also you can define the cohorts as vector directly:
-#cohorts <-c(12822, 12824, 12825)
+# specify cohorts you want to run the comparison for
+# you can define the cohorts as vector:
+cohorts <-c(1, 2, 3)
 
-#you must specify the full file name with cohortIds
-cohortsDF <- readr::read_delim("~/PhenotypeChangesInVocabUpdate/extras/Cohorts.csv", delim = "\t", show_col_types = FALSE)
-cohorts <-cohortsDF[[1]]
-
-#excluded nodes is a text string with nodes you want to exclude from the analysis, it's set to 0 by default
+#specify excluded nodes ("Nodes" are the concepts put in concept set expression)
+#it is a text string with nodes you want to exclude from the analysis, it's set to 0 by default
 # for example now some CPT4 and HCPCS are mapped to Visit concepts and we didn't implement this in the ETL,
-#so we don't want these in the analysis (note, the tool doesn't look at the actual CDM, but on the mappings in the vocabulary)
+# so we don't want these in the analysis (note, the tool doesn't look at the actual CDM, but on the mappings in the vocabulary, predicting how the ETL will be done)
 #this way, the excludedNodes are defined in this way:
-#excludedNodes <-"9201, 9202, 9203"
+excludedNodes <-"9202, 2514435,9203,2514436,2514437,2514434,2514433,9201" # visit concepts
 
+#you can restrict the output by using specific source vocabularies (only those that exist in your data as source concepts and thus plays role in event capture), if variable isn't defined, all vocabularies are included in the analysis
+# for example:
+includedSourceVocabs <- "'ICD10', 'ICD10CM', 'CPT4', 'HCPCS', 'NDC', 'ICD9CM', 'ICD9Proc', 'ICD10PCS', 'ICDO3', 'JMDC'" 
 
 #set connectionDetails,
 #you can use keyring to store your credentials,
-#see how to configure keyring to use with the example below in ~/PhenotypeChangesInVocabUpdate/extras/KeyringSetup.R
+#see how to configure keyring: https://github.com/OHDSI/PhenotypeChangesInVocabUpdate/blob/modify_output/extras/KeyringSetup.R
 
-# you can also define connectionDetails directly, see the DatabaseConnector documentation https://ohdsi.github.io/DatabaseConnector/
+# you can also define connectionDetails directly, see the DatabaseConnector documentation: https://ohdsi.github.io/DatabaseConnector/
 
 connectionDetails = DatabaseConnector::createConnectionDetails(
   dbms = keyring::key_get("YourDatabase", "dbms" ),
@@ -52,6 +61,7 @@ connectionDetails = DatabaseConnector::createConnectionDetails(
   password = keyring::key_get("YourDatabase", "password" )
 )
 
+#specify working schemas
 newVocabSchema <-'vocab_schema_n1' #schema containing a new vocabulary version
 oldVocabSchema <-'vocab_schema_n0' #schema containing an older vocabulary version
 resultSchema <-'achilles_results' #schema containing Achilles results
@@ -64,7 +74,10 @@ resultToExcel(connectionDetails = connectionDetails,
               Concepts_in_cohortSet = Concepts_in_cohortSet,
               newVocabSchema = newVocabSchema,
               oldVocabSchema = oldVocabSchema,
-              resultSchema = resultSchema)
+              resultSchema = resultSchema,
+              excludedNodes = excludedVisitNodes,
+              includedSourceVocabs = includedSourceVocabs
+              )
 
 #open the excel file
 #Windows
@@ -85,10 +98,6 @@ Writes an Excel file with a separate tab for each type of comparison.
 
 **"Node concept"** is a concept directly used in Concept Set Expression
 
-**"includedescendants"**: indicates whether descendants of "Node concept" are included in concept set, 0 stands for False, 1 stands for True
-
-**"isexcluded"**: indicates whether "Node concept" and it's descendants if "includedescendants" = 1 are excluded from a concept set, 0 stands for False, 1 stands for True
-
 **"drc"**: descendant record count - total number of occurrences of descendants of a given concept
 
 **"source concept":** related source concept_id. The concept set definition is usually done through standard concepts, but different clinical events might be captured with the same standard concepts if mapping was changed, that's why the tool tracks source concepts related.
@@ -99,39 +108,7 @@ Writes an Excel file with a separate tab for each type of comparison.
 ## The Excel file has the following tabs:
 
 
-### 1. summaryTable 
-
-sum of added or removed source concepts occurrences in a dataset per cohort
-
-- for example, the cohort_id 123 doesn't pick up source codes X and Y when using newer vocabulary version. X appears 10 times in the data, Y appears 15 times.
-
-In this situation you'll get the following output:
-
-
-<table>
-  <tr>
-   <td>cohortid
-   </td>
-   <td>123
-   </td>
-  </tr>
-  <tr>
-   <td>action
-   </td>
-   <td>Removed
-   </td>
-  </tr>
-  <tr>
-   <td>sum
-   </td>
-   <td>25
-   </td>
-  </tr>
-</table>
-
-
-
-### 2. nonStNodes
+### 1. nonStNodes
 
 lists non-standard concepts used in the concept set definition.
 
@@ -155,6 +132,11 @@ In this situation you'll get the output below, which gives you the **target conc
    <td>cohortid
    </td>
    <td>10729
+   </td>
+  </tr>
+     <td>cohortname
+   </td>
+   <td>Malignant neoplasms
    </td>
   </tr>
   <tr>
@@ -227,11 +209,9 @@ In this situation you'll get the output below, which gives you the **target conc
 
 
 
-### 3. mapDif
+### 2. mapDif
 
 Tab shows related source concepts that were added or removed. Mapping in both vocabulary versions is shown. 
-
-Note, source codes from the user's database only are included into the analysis.
 
 This way the user knows why the difference in related source concepts occurs and might modify the concept set expression adding or removing mapped concepts.
 
@@ -243,6 +223,11 @@ This way the user knows why the difference in related source concepts occurs and
    <td>COHORTID
    </td>
    <td>12822
+   </td>
+  </tr>
+     <td>COHORTNAME
+   </td>
+   <td>Nerve disorders
    </td>
   </tr>
   <tr>
@@ -258,37 +243,13 @@ This way the user knows why the difference in related source concepts occurs and
    </td>
   </tr>
   <tr>
-   <td>ISEXCLUDED
-   </td>
-   <td>0
-   </td>
-  </tr>
-  <tr>
-   <td>INCLUDEDESCENDANTS
-   </td>
-   <td>1
-   </td>
-  </tr>
-  <tr>
-   <td>NODE_CONCEPT_ID
-   </td>
-   <td>441848
-   </td>
-  </tr>
-  <tr>
-   <td>NODE_CONCEPT_NAME
-   </td>
-   <td>Cranial nerve disorder
-   </td>
-  </tr>
-  <tr>
-   <td>SOURCE_CONCEPT_ID
+    <td>SOURCE_CONCEPT_ID
    </td>
    <td>44823107
    </td>
   </tr>
   <tr>
-   <td>sourceCodesCount
+   <td>RECORD_COUNT
    </td>
    <td>7115
    </td>
@@ -368,181 +329,91 @@ This way the user knows why the difference in related source concepts occurs and
 </table>
 
 
-
-### 4.peakDif
-
-Hierarchy change is reflected at "Peak concept" level, the common parent concept of added or removed standard concepts above which the hierarchy is changed.
-
-- In the example below, the **375527|Headache disorder** and all its descendants were added to the included concepts in the **Headache** concept set. This is quite a big change since **drc** (descendant record count)= 34219562, and now a researcher has to decide whether the new, more broad, definition fits well.
-
-
-<table>
-  <tr>
-   <td>cohortid
-   </td>
-   <td>12825
-   </td>
-  </tr>
-  <tr>
-   <td>conceptsetid
-   </td>
-   <td>23
-   </td>
-  </tr>
-  <tr>
-   <td>conceptsetname
-   </td>
-   <td>Headache
-   </td>
-  </tr>
-  <tr>
-   <td>isexcluded
-   </td>
-   <td>0
-   </td>
-  </tr>
-  <tr>
-   <td>includedescendants
-   </td>
-   <td>1
-   </td>
-  </tr>
-  <tr>
-   <td>nodeConceptId
-   </td>
-   <td>378253
-   </td>
-  </tr>
-  <tr>
-   <td>nodeConceptName
-   </td>
-   <td>Headache
-   </td>
-  </tr>
-  <tr>
-   <td>action
-   </td>
-   <td>Added
-   </td>
-  </tr>
-  <tr>
-   <td><strong>peakConceptId</strong>
-   </td>
-   <td><strong>375527</strong>
-   </td>
-  </tr>
-  <tr>
-   <td><strong>peakName</strong>
-   </td>
-   <td><strong>Headache disorder</strong>
-   </td>
-  </tr>
-  <tr>
-   <td>peakCode
-   </td>
-   <td>230461009
-   </td>
-  </tr>
-  <tr>
-   <td>drc
-   </td>
-   <td>34219562
-   </td>
-  </tr>
-</table>
-
-
-
-### 5. domainChange
+### 3. domainChange
 
 This tab shows included concepts that changed their domain, so the different event table should be used.
-
-- In the example below “2108163|Therapeutic apheresis; for plasma pheresis” concept changed its domain from **Procedure** to **Measurement**, so the concept set “Treatment or investigation for TMA” needs to be used with Measurement table as well to include the “2108163|Therapeutic apheresis; for plasma pheresis” events.
+To show how these concepts are connected to actual events, source codes with their record counts are shown
 
 
 <table>
   <tr>
    <td>cohortid
    </td>
-   <td>10656
+   <td>123
+   </td>
+  </tr>
+  <tr>
+   <td>cohortname
+   </td>
+   <td>Altered mental status
    </td>
   </tr>
   <tr>
    <td>conceptsetname
    </td>
-   <td>Treatment or investigation for TMA
+   <td>Altered mental status
    </td>
   </tr>
   <tr>
    <td>conceptsetid
    </td>
-   <td>20
-   </td>
-  </tr>
-  <tr>
-   <td>isexcluded
-   </td>
-   <td>0
-   </td>
-  </tr>
-  <tr>
-   <td>includedescendants
-   </td>
    <td>1
-   </td>
-  </tr>
-  <tr>
-   <td>nodeConceptId
-   </td>
-   <td>4182536
-   </td>
-  </tr>
-  <tr>
-   <td>nodeConceptName
-   </td>
-   <td>Transfusion
    </td>
   </tr>
   <tr>
    <td>conceptId
    </td>
-   <td>2108163
+   <td>436222
    </td>
   </tr>
   <tr>
    <td>conceptName
    </td>
-   <td>Therapeutic apheresis; for plasma pheresis
+   <td>Altered mental status
    </td>
   </tr>
   <tr>
    <td>vocabularyId
    </td>
-   <td>CPT4
+   <td>SNOMED
    </td>
   </tr>
   <tr>
-   <td>conceptCode
+   <td>sourceconceptCode
    </td>
-   <td>36514
+   <td>R41.82
+   </td>
+  </tr>
+  <td>sourceconceptname
+   </td>
+   <td>Altered mental status, unspecified
+   </td>
+  </tr>
+  <td>sourceVocabularyId
+   </td>
+   <td>ICD10CM
    </td>
   </tr>
   <tr>
    <td><strong>oldDomainId</strong>
    </td>
-   <td><strong>Procedure</strong>
+   <td><strong>Condition</strong>
    </td>
   </tr>
   <tr>
    <td><strong>newDomainId</strong>
    </td>
-   <td><strong>Measurement</strong>
+   <td><strong>Observation</strong>
    </td>
   </tr>
   <tr>
-   <td>drc
+   <td>sourceConceptRecordCount
    </td>
-   <td>1010478
+   <td>88528142
    </td>
   </tr>
 </table>
+
+## Checking updated cohorts
+ After you created updated versions of cohorts in Atlas, to check if the new cohort on a new vocabulary is resolved in the same way as the old one on the old vocabulary you need to run the "compareCohorts" funcion, it will give result similar to the "PhenChange.xlsx", but two cohorts on two vocabulary versions will be compared
+### see example of the code to run in "extras/codeToRunCheckResults.R"
