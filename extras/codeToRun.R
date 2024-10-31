@@ -74,7 +74,8 @@ resultToExcel(connectionDetailsVocab = connectionDetailsVocab,
               newVocabSchema = newVocabSchema,
               oldVocabSchema = oldVocabSchema,
               excludedNodes = excludedVisitNodes,
-              resultSchema = resultSchema
+              resultSchema = resultSchema,
+              includedSourceVocabs = includedSourceVocabs			  
 )
 
 #open the excel file
