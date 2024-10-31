@@ -44,10 +44,10 @@ Concepts_in_cohortSet_all_dates <- Concepts_in_cohortSet_all_dates %>% rename (c
 excludedVisitNodes <- "9202, 2514435,9203,2514436,2514437,2514434,2514433,9201"
 includedSourceVocabs <- "'ICD10', 'ICD10CM', 'CPT4', 'HCPCS', 'NDC', 'ICD9CM', 'ICD9Proc', 'ICD10PCS', 'ICDO3', 'JMDC'"
 newVocabSchema <-'v20240229' #schema containing a new vocabulary version
-#oldVocabSchema <-'v20230116' #schema containing an older vocabulary
+oldVocabSchema <-'v20230116' #schema containing an older vocabulary
 #oldVocabSchema <-'v20220909' #schema containing an older vocabulary
 #oldVocabSchema <-'v20220409' #schema containing an older vocabulary
-oldVocabSchema <-'v20210617' #schema containing an older vocabulary
+#oldVocabSchema <-'v20210617' #schema containing an older vocabulary
 
 resultSchema <-'scratch_ddymshyt' #schema containing Achilles results
 
@@ -58,15 +58,18 @@ resultSchema <-'scratch_ddymshyt' #schema containing Achilles results
 #Concepts_in_cohortSet<-Concepts_in_cohortSet_all_dates  %>%  filter(createdDate > as.Date('2022-01-01') & createdDate <= as.Date('2022-05-01')) # none
 #Concepts_in_cohortSet<-Concepts_in_cohortSet_all_dates  %>%  filter(createdDate > as.Date('2021-07-01') & createdDate <= as.Date('2022-01-01'))
 #Concepts_in_cohortSet<-Concepts_in_cohortSet_all_dates  %>%  filter(createdDate > as.Date('2021-03-01') & createdDate <= as.Date('2021-07-01')) #none
-Concepts_in_cohortSet<-Concepts_in_cohortSet_all_dates  %>%  filter( createdDate <= as.Date('2021-03-01')) #none
+#Concepts_in_cohortSet<-Concepts_in_cohortSet_all_dates  %>%  filter( createdDate <= as.Date('2021-03-01')) #none
 
+#by default we don't need to stratify by dates, we assume that we have the latest version of cohorts working on the previous version of the vocabylary
+Concepts_in_cohortSet<-Concepts_in_cohortSet_all_dates
 
 PhenotypeChangesInVocabUpdate::resultToExcel(connectionDetailsVocab = connectionDetailsVocab,
               Concepts_in_cohortSet = Concepts_in_cohortSet,
               newVocabSchema = newVocabSchema,
               oldVocabSchema = oldVocabSchema,
               excludedNodes = excludedVisitNodes,
-              resultSchema = resultSchema
+              resultSchema = resultSchema,
+			  includedSourceVocabs = includedSourceVocabs
 )
 
 #open the excel file
