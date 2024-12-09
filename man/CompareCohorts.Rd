@@ -57,14 +57,14 @@ This function resolves concept sets of two cohorts run on different vocabulary v
 }
 \examples{
 \dontrun{
-CompareCohorts <-function( connectionDetailsVocab,
-                          cohorts, # contains old and new cohorts, old withing 1 vocab version, new within another vocab version
-                        Concepts_in_cohortSetOldCht,
-                        Concepts_in_cohortSetNewCht,
-                        newVocabSchema,
-                        oldVocabSchema,
-                        resultSchema,
-                        excludedNodes = 0,
-                        includedSourceVocabs =0)
+                             CompareCohorts(connectionDetailsVocab = connectionDetailsVocab,
+                                           cohorts = cohorts,
+                                           Concepts_in_cohortSetOldCht = Concepts_in_cohortSetOldCht,
+                                           Concepts_in_cohortSetNewCht = Concepts_in_cohortSetNewCht,
+                                           newVocabSchema = newVocabSchema,
+                                           oldVocabSchema = oldVocabSchema,
+                                           excludedNodes = excludedVisitNodes,
+                                           resultSchema = resultSchema)
+
 }
 }
