@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/reference/test_package.html#special-files
 
 library(testthat)
-library(phenotypeChangeVocab)
+library(PhenotypeChangesInVocabUpdate)
 
-test_check("phenotypeChangeVocab")
+test_check("PhenotypeChangesInVocabUpdate")

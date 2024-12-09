@@ -17,9 +17,12 @@
 #'                              "ConceptID","isExcluded","includeDescendants","conceptsetId","conceptsetName","cohortId"
 #' @param newVocabSchema        schema containing a new vocabulary version
 #' @param oldVocabSchema        schema containing an older vocabulary version
+#' @param tempEmulationSchema   some database platforms like Oracle and Impala do not truly support temp tables. To emulate temp tables, provide a schema with write privileges where temp tables can be created.
 #' @param resultSchema          schema containing Achilles results
 #' @param excludedNodes         text string with excluded nodes, for example: "9201, 9202, 9203"; 0 by default
 #' @param includedSourceVocabs  text string with included source vocabularies, for example: "'ICD10CM', 'ICD9CM', 'HCPCS'"; 0 by default, which is treated as ALL vocabularies
+#' @param batchSize             the number of rows to insert at one time when inserting concept data into a database table for analysis, if you choose to insert data in batches
+#' @param outputFolder          the folder to which the output Excel file should be written
 #'
 #' @examples
 #' \dontrun{
@@ -27,52 +30,61 @@
 #'  Concepts_in_cohortSet = Concepts_in_cohortSet, # is returned by getNodeConcepts function
 #'  newVocabSchema = "omopVocab_v1", #schema containing newer vocabulary version
 #'  oldVocabSchema = "omopVocab_v0", #schema containing older vocabulary version
-#'  resultSchema = "achillesresults") #schema with achillesresults
+#'  resultSchema = "achillesresults", #schema with achillesresults
+#'  outputFolder = "output")
 #' }
 #' @export
 
-
-resultToExcel <-function( connectionDetailsVocab,
+resultToExcel <- function(connectionDetails,
                           Concepts_in_cohortSet,
                           newVocabSchema,
                           oldVocabSchema,
                           resultSchema,
+                          tempEmulationSchema = NULL,
                           excludedNodes = 0,
-						  includedSourceVocabs =0)
+						              includedSourceVocabs = 0,
+						              batchSize = NA,
+						              outputFolder)
 {
   #use databaseConnector to run SQL and extract tables into data frames
-
-
-
   #connect to the vocabulary server
-  conn <- DatabaseConnector::connect(connectionDetailsVocab)
-
+  conn <- DatabaseConnector::connect(connectionDetails)
 
   #insert Concepts_in_cohortSet into the SQL database where concepts sets will be resolved
-  #for Redshift ask your administrator for a key for bulk load
-  DatabaseConnector::insertTable(connection = conn,
-                                 tableName = "#ConceptsInCohortSet",
-                                 data = Concepts_in_cohortSet,
-                                 dropTableIfExists = TRUE,
-                                 createTable = TRUE,
-                                 tempTable = T,
-                                 bulkLoad = F)
 
+  if (is.null(tempEmulationSchema)) {
+    conceptTableName <- "#concepts_in_cohort_set"
+  } else {
+    conceptTableName <- paste0(tempEmulationSchema, ".concepts_in_cohort_set")
+  }
+
+  if (!is.na(batchSize)) {
+    batch <- TRUE
+  } else {
+    batch <- FALSE
+  }
+
+  DatabaseConnector::dbWriteTable(conn = conn,
+                                  name = conceptTableName,
+                                  value = Concepts_in_cohortSet,
+                                  overwrite = TRUE,
+                                  batch = batch,
+                                  batchSize = batchSize)
 
   # read SQL from file
- pathToSql <- system.file("sql/sql_server", "AllFromNodes.sql", package = "PhenotypeChangesInVocabUpdate")
- InitSql <- read_file(pathToSql)
-
+  pathToSql <- system.file("sql/sql_server", "AllFromNodes.sql", package = "PhenotypeChangesInVocabUpdate")
+  InitSql <- read_file(pathToSql)
 
   #run the SQL creating all tables needed for the output
-  DatabaseConnector::renderTranslateExecuteSql (connection = conn,
-                                                InitSql,
-                                                newVocabSchema=newVocabSchema,
-                                                oldVocabSchema= oldVocabSchema,
-                                                resultSchema = resultSchema,
-                                                excludedNodes = excludedNodes,
-												includedSourceVocabs = includedSourceVocabs
-  )
+  DatabaseConnector::renderTranslateExecuteSql(connection = conn,
+                                               sql = InitSql,
+                                               tempEmulationSchema = tempEmulationSchema,
+                                               newVocabSchema = newVocabSchema,
+                                               oldVocabSchema = oldVocabSchema,
+                                               resultSchema = resultSchema,
+                                               excludedNodes = excludedNodes,
+                        											 includedSourceVocabs = includedSourceVocabs,
+                        											 conceptTableName = conceptTableName)
 
   #get SQL tables into dataframes
 
@@ -80,11 +92,13 @@ resultToExcel <-function( connectionDetailsVocab,
   # so this is done in R
   #source concepts resolved and their mapping in the old vocabulary
   oldMap <- DatabaseConnector::renderTranslateQuerySql(connection = conn,
-                                                       "select * from #oldmap", snakeCaseToCamelCase = F)
+                                                       "select * from #oldmap", snakeCaseToCamelCase = F,
+                                                       tempEmulationSchema = tempEmulationSchema)
 
   #source concepts resolved and their mapping in the new vocabulary
   newMap <- DatabaseConnector::renderTranslateQuerySql(connection = conn,
-                                                       "select * from #newmap", snakeCaseToCamelCase = F)
+                                                       "select * from #newmap", snakeCaseToCamelCase = F,
+                                                       tempEmulationSchema = tempEmulationSchema)
 
   #aggregate the target concepts into one row so we can compare old and new mapping, newMap
   newMapAgg <-
@@ -120,14 +134,14 @@ resultToExcel <-function( connectionDetailsVocab,
 
   #get the non-standard concepts used in concept set definitions
   nonStNodes <- DatabaseConnector::renderTranslateQuerySql(connection = conn,
-                                                           "select * from #non_st_Nodes
-order by drc desc", snakeCaseToCamelCase = T) # to evaluate the best way of naming
-
+                                                           "select * from #non_st_Nodes order by drc desc", snakeCaseToCamelCase = T,
+                                                           tempEmulationSchema = tempEmulationSchema) # to evaluate the best way of naming
 
   #get the standard concepts changed domains and their mapped counterparts
   domainChange <-DatabaseConnector::renderTranslateQuerySql(connection = conn,
-                                                            "select * from
-                                           #resolv_dom_dif order by source_concept_record_count desc",  snakeCaseToCamelCase = T)
+                                                            "select * from #resolv_dom_dif order by source_concept_record_count desc", snakeCaseToCamelCase = T,
+                                                            tempEmulationSchema = tempEmulationSchema)
+
   #disconnect
   DatabaseConnector::disconnect(conn)
 
@@ -143,5 +157,6 @@ order by drc desc", snakeCaseToCamelCase = T) # to evaluate the best way of nami
   addWorksheet(wb, "domainChange")
   writeData(wb, "domainChange", domainChange)
 
-  saveWorkbook(wb, "PhenChange.xlsx", overwrite = TRUE)
+  wbSavePath <- fs::path(outputFolder, "PhenChange", ext = "xlsx")
+  saveWorkbook(wb, wbSavePath, overwrite = TRUE)
 }
