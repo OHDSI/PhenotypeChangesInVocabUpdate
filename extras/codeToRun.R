@@ -64,4 +64,5 @@ resultToExcel(connectionDetails = connectionDetails,
               resultSchema = resultSchema,
               includedSourceVocabs = includedSourceVocabs,
               tempEmulationSchema = tempEmulationSchema,
+              outputFileName = "cs_changes",
               outputFolder = here::here("extras"))
