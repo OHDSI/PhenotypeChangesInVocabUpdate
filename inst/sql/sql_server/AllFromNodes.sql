@@ -4,7 +4,7 @@ select cohortid,cohortName, conceptsetname, conceptsetid, isexcluded, includedes
 cn.concept_id as Node_concept_id , cn.concept_name as node_concept_name , coalesce (aro.descendant_record_count, 0) as drc,
 cm.concept_id as maps_to_concept_id, cm.concept_name as maps_to_concept_name,
 cmv.concept_id as maps_to_value_concept_id, cmv.concept_name as maps_to_value_concept_name
-from @conceptTableName s
+from #ConceptsInCohortSet s
 join @newVocabSchema.concept cn on cn.concept_id = s.conceptid and cn.standard_concept is null
 left join @resultSchema.achilles_result_concept_count aro on aro.concept_id = cn.concept_id
 left join @newVocabSchema.concept_relationship cr on cr.concept_id_1 = cn.concept_id and cr.relationship_id ='Maps to'
@@ -17,7 +17,7 @@ order by drc desc
 --old vocabulary vs new, source concept comparison
 create table #old_vc as
 select cohortid, cohortName,conceptsetname, conceptsetid, ca.descendant_concept_id
-from @conceptTableName s
+from #ConceptsInCohortSet s
 join @oldVocabSchema.concept cn on cn.concept_id = s.conceptid
 join @oldVocabSchema.concept_ancestor ca on ca.ancestor_concept_id = cn.concept_id
 and ((includedescendants = 0 and ca.ancestor_concept_id = ca.descendant_concept_id ) or includedescendants != 0)
@@ -26,7 +26,7 @@ and isexcluded = 0
 and s.conceptid not in (@excludedNodes)
 except
 select cohortid,cohortName, conceptsetname, conceptsetid , ca.descendant_concept_id
-from @conceptTableName s
+from #ConceptsInCohortSet s
 join @oldVocabSchema.concept cn on cn.concept_id = s.conceptid
 join @oldVocabSchema.concept_ancestor ca on ca.ancestor_concept_id = cn.concept_id
 and ((includedescendants = 0 and ca.ancestor_concept_id = ca.descendant_concept_id ) or includedescendants != 0)
@@ -35,7 +35,7 @@ and isexcluded = 1
 create table #new_vc
  as
 select cohortid, cohortName,conceptsetname, conceptsetid, ca.descendant_concept_id
-from @conceptTableName s
+from #ConceptsInCohortSet s
 join @newVocabSchema.concept cn on cn.concept_id = s.conceptid
 join @newVocabSchema.concept_ancestor ca on ca.ancestor_concept_id = cn.concept_id
 and ((includedescendants = 0 and ca.ancestor_concept_id = ca.descendant_concept_id ) or includedescendants != 0)
@@ -44,7 +44,7 @@ and isexcluded = 0
 and s.conceptid not in (@excludedNodes)
 except
 select cohortid,cohortName, conceptsetname, conceptsetid , ca.descendant_concept_id
-from @conceptTableName s
+from #ConceptsInCohortSet s
 join @newVocabSchema.concept cn on cn.concept_id = s.conceptid
 join @newVocabSchema.concept_ancestor ca on ca.ancestor_concept_id = cn.concept_id
 and ((includedescendants = 0 and ca.ancestor_concept_id = ca.descendant_concept_id ) or includedescendants != 0)
@@ -122,5 +122,3 @@ left join @resultSchema.achilles_result_concept_count aro on aro.concept_id = cs
 where co.domain_id != cn.domain_id
 {@includedSourceVocabs !=0}? {and cs.vocabulary_id in (@includedSourceVocabs)}
 ;
---4. cleanup
-drop table if exists @conceptTableName;

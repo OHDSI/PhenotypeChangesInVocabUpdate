@@ -22,6 +22,7 @@
 #' @param excludedNodes         text string with excluded nodes, for example: "9201, 9202, 9203"; 0 by default
 #' @param includedSourceVocabs  text string with included source vocabularies, for example: "'ICD10CM', 'ICD9CM', 'HCPCS'"; 0 by default, which is treated as ALL vocabularies
 #' @param batchSize             the number of rows to insert at one time when inserting concept data into a database table for analysis, if you choose to insert data in batches
+#' @param ouptputFileName       the name of the output Excel file
 #' @param outputFolder          the folder to which the output Excel file should be written
 #'
 #' @examples
@@ -31,6 +32,7 @@
 #'  newVocabSchema = "omopVocab_v1", #schema containing newer vocabulary version
 #'  oldVocabSchema = "omopVocab_v0", #schema containing older vocabulary version
 #'  resultSchema = "achillesresults", #schema with achillesresults
+#'  outputFileName = "output",
 #'  outputFolder = "output")
 #' }
 #' @export
@@ -44,6 +46,7 @@ resultToExcel <- function(connectionDetails,
                           excludedNodes = 0,
 						              includedSourceVocabs = 0,
 						              batchSize = NA,
+						              outputFileName,
 						              outputFolder)
 {
   #use databaseConnector to run SQL and extract tables into data frames
@@ -51,25 +54,14 @@ resultToExcel <- function(connectionDetails,
   conn <- DatabaseConnector::connect(connectionDetails)
 
   #insert Concepts_in_cohortSet into the SQL database where concepts sets will be resolved
-
-  if (is.null(tempEmulationSchema)) {
-    conceptTableName <- "#concepts_in_cohort_set"
-  } else {
-    conceptTableName <- paste0(tempEmulationSchema, ".concepts_in_cohort_set")
-  }
-
-  if (!is.na(batchSize)) {
-    batch <- TRUE
-  } else {
-    batch <- FALSE
-  }
-
-  DatabaseConnector::dbWriteTable(conn = conn,
-                                  name = conceptTableName,
-                                  value = Concepts_in_cohortSet,
-                                  overwrite = TRUE,
-                                  batch = batch,
-                                  batchSize = batchSize)
+  DatabaseConnector::insertTable(connection = conn,
+                                 tableName = "#ConceptsInCohortSet",
+                                 data = Concepts_in_cohortSet,
+                                 dropTableIfExists = TRUE,
+                                 createTable = TRUE,
+                                 tempTable = T,
+                                 bulkLoad = F,
+                                 tempEmulationSchema = tempEmulationSchema)
 
   # read SQL from file
   pathToSql <- system.file("sql/sql_server", "AllFromNodes.sql", package = "PhenotypeChangesInVocabUpdate")
@@ -83,8 +75,7 @@ resultToExcel <- function(connectionDetails,
                                                oldVocabSchema = oldVocabSchema,
                                                resultSchema = resultSchema,
                                                excludedNodes = excludedNodes,
-                        											 includedSourceVocabs = includedSourceVocabs,
-                        											 conceptTableName = conceptTableName)
+                        											 includedSourceVocabs = includedSourceVocabs)
 
   #get SQL tables into dataframes
 
@@ -157,6 +148,6 @@ resultToExcel <- function(connectionDetails,
   addWorksheet(wb, "domainChange")
   writeData(wb, "domainChange", domainChange)
 
-  wbSavePath <- fs::path(outputFolder, "PhenChange", ext = "xlsx")
+  wbSavePath <- fs::path(outputFolder, outputFileName, ext = "xlsx")
   saveWorkbook(wb, wbSavePath, overwrite = TRUE)
 }
