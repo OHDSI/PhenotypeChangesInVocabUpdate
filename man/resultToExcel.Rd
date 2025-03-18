@@ -14,6 +14,7 @@ resultToExcel(
   excludedNodes = 0,
   includedSourceVocabs = 0,
   batchSize = NA,
+  outputFileName,
   outputFolder
 )
 }
@@ -41,6 +42,8 @@ it should have the following columns:
 \item{batchSize}{the number of rows to insert at one time when inserting concept data into a database table for analysis, if you choose to insert data in batches}
 
 \item{outputFolder}{the folder to which the output Excel file should be written}
+
+\item{ouptputFileName}{the name of the output Excel file}
 }
 \description{
 This function resolves concept sets in a SQL database
@@ -58,6 +61,7 @@ The result is written to an excel file with the tab for each check
  newVocabSchema = "omopVocab_v1", #schema containing newer vocabulary version
  oldVocabSchema = "omopVocab_v0", #schema containing older vocabulary version
  resultSchema = "achillesresults", #schema with achillesresults
+ outputFileName = "output",
  outputFolder = "output")
 }
 }
