@@ -66,6 +66,9 @@ newVocabSchema <-'vocab_schema_n1' #schema containing a new vocabulary version
 oldVocabSchema <-'vocab_schema_n0' #schema containing an older vocabulary version
 resultSchema <-'achilles_results' #schema containing Achilles results
 
+# set schema to which temp tables should be written
+tempEmulationSchema <- resultSchema
+
 #create the dataframe with concept set expressions using the getNodeConcepts function
 Concepts_in_cohortSet<-getNodeConcepts(cohorts, baseUrl)
 
@@ -75,9 +78,10 @@ resultToExcel(connectionDetails = connectionDetails,
               newVocabSchema = newVocabSchema,
               oldVocabSchema = oldVocabSchema,
               resultSchema = resultSchema,
-              excludedNodes = excludedVisitNodes,
-              includedSourceVocabs = includedSourceVocabs
-              )
+              includedSourceVocabs = includedSourceVocabs,
+              tempEmulationSchema = tempEmulationSchema,
+              outputFileName = "cs_changes",
+              outputFolder = "output")
 
 #open the excel file
 #Windows

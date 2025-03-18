@@ -6,8 +6,6 @@
 #remotes::install_github("OHDSI/PhenotypeChangesInVocabUpdate")
 #remotes::install_github("OHDSI/DatabaseConnector")
 
-remotes::install_github("OHDSI/PhenotypeChangesInVocabUpdate")
-
 library (dplyr)
 library (openxlsx)
 library (readr)
@@ -45,12 +43,12 @@ includedSourceVocabs <- "'ICD10', 'ICD10CM', 'CPT4', 'HCPCS', 'NDC', 'ICD9CM', '
 
 # you can also define connectionDetails directly, see the DatabaseConnector documentation https://ohdsi.github.io/DatabaseConnector/
 
- # connectionDetailsVocab = DatabaseConnector::createConnectionDetails(
- #   dbms = keyring::key_get("YourDatabase", "dbms" ),
- #   connectionString = keyring::key_get("YourDatabase", "connectionString"),
- #   user = keyring::key_get("YourDatabase", "username"),
- #   password = keyring::key_get("YourDatabase", "password" )
- # )
+# connectionDetailsVocab = DatabaseConnector::createConnectionDetails(
+#   dbms = keyring::key_get("YourDatabase", "dbms" ),
+#   connectionString = keyring::key_get("YourDatabase", "connectionString"),
+#   user = keyring::key_get("YourDatabase", "username"),
+#   password = keyring::key_get("YourDatabase", "password" )
+# )
 
 #specify schemas with vocabulary versions you want to compare
 newVocabSchema <-'v20240229' #schema containing a new vocabulary version
@@ -64,19 +62,23 @@ oldVocabSchema <-'v20220909' #schema containing an older vocabulary
 
 resultSchema <-'scratch_ddymshyt' #schema containing Achilles results
 
+# set schema to which temp tables should be written
+tempEmulationSchema <- resultSchema
+
 #create the dataframe with concept set expressions using the getNodeConcepts function
 Concepts_in_cohortSet<-getNodeConcepts(cohorts, baseUrl)
 
 #resolve concept sets, compare the outputs on different vocabulary versions, write results to the Excel file
 #for Redshift ask your administrator for a key for bulk load, since the function uploads the data to the database
-resultToExcel(connectionDetailsVocab = connectionDetailsVocab,
+resultToExcel(connectionDetails = connectionDetails,
               Concepts_in_cohortSet = Concepts_in_cohortSet,
               newVocabSchema = newVocabSchema,
               oldVocabSchema = oldVocabSchema,
-              excludedNodes = excludedVisitNodes,
               resultSchema = resultSchema,
-              includedSourceVocabs = includedSourceVocabs			  
-)
+              includedSourceVocabs = includedSourceVocabs,
+              tempEmulationSchema = tempEmulationSchema,
+              outputFileName = "cs_changes",
+              outputFolder = "output")
 
 #open the excel file
 #Windows

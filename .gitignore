@@ -7,3 +7,5 @@ errorReportSql.txt
 .RHistory
 inst/doc
 PhenChange.xlsx
+.Rhistory
+extras/codeToRunBoehringer.R

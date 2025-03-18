@@ -5,16 +5,24 @@
 \title{This function resolves concept sets in a SQL database and writes the result to the Excel file}
 \usage{
 resultToExcel(
-  connectionDetailsVocab,
+  connectionDetails,
   Concepts_in_cohortSet,
   newVocabSchema,
   oldVocabSchema,
   resultSchema,
+  tempEmulationSchema = NULL,
   excludedNodes = 0,
-  includedSourceVocabs = 0
+  includedSourceVocabs = 0,
+  batchSize = NA,
+  outputFileName,
+  outputFolder
 )
 }
 \arguments{
+\item{connectionDetails}{An R object of type\cr\code{connectionDetails} created using the
+function \code{createConnectionDetails} in the
+\code{DatabaseConnector} package.}
+
 \item{Concepts_in_cohortSet}{dataframe which stores cohorts and concept set definitions in a tabular format,
 it should have the following columns:
 "ConceptID","isExcluded","includeDescendants","conceptsetId","conceptsetName","cohortId"}
@@ -25,13 +33,17 @@ it should have the following columns:
 
 \item{resultSchema}{schema containing Achilles results}
 
+\item{tempEmulationSchema}{some database platforms like Oracle and Impala do not truly support temp tables. To emulate temp tables, provide a schema with write privileges where temp tables can be created.}
+
 \item{excludedNodes}{text string with excluded nodes, for example: "9201, 9202, 9203"; 0 by default}
 
 \item{includedSourceVocabs}{text string with included source vocabularies, for example: "'ICD10CM', 'ICD9CM', 'HCPCS'"; 0 by default, which is treated as ALL vocabularies}
 
-\item{connectionDetails}{An R object of type\cr\code{connectionDetails} created using the
-function \code{createConnectionDetails} in the
-\code{DatabaseConnector} package.}
+\item{batchSize}{the number of rows to insert at one time when inserting concept data into a database table for analysis, if you choose to insert data in batches}
+
+\item{outputFolder}{the folder to which the output Excel file should be written}
+
+\item{ouptputFileName}{the name of the output Excel file}
 }
 \description{
 This function resolves concept sets in a SQL database
@@ -48,6 +60,8 @@ The result is written to an excel file with the tab for each check
  Concepts_in_cohortSet = Concepts_in_cohortSet, # is returned by getNodeConcepts function
  newVocabSchema = "omopVocab_v1", #schema containing newer vocabulary version
  oldVocabSchema = "omopVocab_v0", #schema containing older vocabulary version
- resultSchema = "achillesresults") #schema with achillesresults
+ resultSchema = "achillesresults", #schema with achillesresults
+ outputFileName = "output",
+ outputFolder = "output")
 }
 }

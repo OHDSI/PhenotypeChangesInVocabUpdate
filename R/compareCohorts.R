@@ -55,6 +55,10 @@ CompareCohorts <-function( connectionDetailsVocab,
                           excludedNodes = 0,
                           includedSourceVocabs =0)
 {
+  if (connectionDetailsVocab$dbms == "snowflake") {
+    stop("This function not yet supported in Snowflake.")
+  }
+
   #use databaseConnector to run SQL and extract tables into data frames
 
 
