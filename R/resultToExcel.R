@@ -20,7 +20,7 @@
 #' @param resultSchema          schema containing Achilles results
 #' @param excludedNodes         text string with excluded nodes, for example: "9201, 9202, 9203"; 0 by default
 #' @param includedSourceVocabs  text string with included source vocabularies, for example: "'ICD10CM', 'ICD9CM', 'HCPCS'"; 0 by default, which is treated as ALL vocabularies
-#'
+#' @param projName              project name - used to name the output file
 #' @examples
 #' \dontrun{
 #'  resultToExcel(connectionDetails = YourconnectionDetails,
@@ -38,7 +38,8 @@ resultToExcel <-function( connectionDetailsVocab,
                           oldVocabSchema,
                           resultSchema,
                           excludedNodes = 0,
-						  includedSourceVocabs =0)
+						              includedSourceVocabs =0,
+					             	  projName  = '')
 {
   #use databaseConnector to run SQL and extract tables into data frames
 
@@ -112,11 +113,10 @@ resultToExcel <-function( connectionDetailsVocab,
       OLD_MAPPED_CONCEPT_CODE = paste(CONCEPT_CODE, collapse = '-')
     )
 
-  #join oldMap and newMap where combination of target concepts are different
+  #join oldMap and newMap to see the mappings of added or removed source concepts
   mapDif <- oldMapAgg %>%
     inner_join(newMapAgg, by = c("COHORTID", "COHORTNAME", "CONCEPTSETNAME", "CONCEPTSETID", "SOURCE_CONCEPT_ID", "ACTION")) %>%
-    filter(if_else(is.na(OLD_MAPPED_CONCEPT_ID), '', OLD_MAPPED_CONCEPT_ID) != if_else(is.na(NEW_MAPPED_CONCEPT_ID), '', NEW_MAPPED_CONCEPT_ID))%>%
-    arrange(desc(RECORD_COUNT))
+   arrange(desc(RECORD_COUNT))
 
   #get the non-standard concepts used in concept set definitions
   nonStNodes <- DatabaseConnector::renderTranslateQuerySql(connection = conn,
@@ -143,5 +143,5 @@ order by drc desc", snakeCaseToCamelCase = T) # to evaluate the best way of nami
   addWorksheet(wb, "domainChange")
   writeData(wb, "domainChange", domainChange)
 
-  saveWorkbook(wb, "PhenChange.xlsx", overwrite = TRUE)
+  saveWorkbook(wb, paste0(projName, "PhenChange.xlsx"), overwrite = TRUE)
 }
