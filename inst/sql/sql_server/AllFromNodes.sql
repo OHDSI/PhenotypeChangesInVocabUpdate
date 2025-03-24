@@ -7,9 +7,9 @@ cmv.concept_id as maps_to_value_concept_id, cmv.concept_name as maps_to_value_co
 from #ConceptsInCohortSet s
 join @newVocabSchema.concept cn on cn.concept_id = s.conceptid and cn.standard_concept is null
 left join @resultSchema.achilles_result_cc aro on aro.concept_id = cn.concept_id
-left join @newVocabSchema.concept_relationship cr on cr.concept_id_1 = cn.concept_id and cr.relationship_id ='Maps to'
+left join @newVocabSchema.concept_relationship cr on cr.concept_id_1 = cn.concept_id and cr.relationship_id ='Maps to' and cr.invalid_reason is null
 left join @newVocabSchema.concept cm on cm.concept_id = cr.concept_id_2
-left join @newVocabSchema.concept_relationship crv on crv.concept_id_1 = cn.concept_id and crv.relationship_id ='Maps to value'
+left join @newVocabSchema.concept_relationship crv on crv.concept_id_1 = cn.concept_id and crv.relationship_id ='Maps to value' and crv.invalid_reason is null
 left join @newVocabSchema.concept cmv on cmv.concept_id = crv.concept_id_2
 order by drc desc
 ;
@@ -55,13 +55,13 @@ with
 old_vc_map as (
 select cohortid,cohortName, conceptsetname, conceptsetid, r.concept_id_2 as source_concept_id
  from #old_vc
-join @oldVocabSchema.concept_relationship r on descendant_concept_id = r.concept_id_1 and r.relationship_id ='Mapped from'
+join @oldVocabSchema.concept_relationship r on descendant_concept_id = r.concept_id_1 and r.relationship_id ='Mapped from' and r.invalid_reason is null
 )
 ,
 new_vc_map as (
 select cohortid,cohortName, conceptsetname, conceptsetid,  r.concept_id_2 as source_concept_id
  from #new_vc
-join @newVocabSchema.concept_relationship r on descendant_concept_id = r.concept_id_1 and r.relationship_id ='Mapped from'
+join @newVocabSchema.concept_relationship r on descendant_concept_id = r.concept_id_1 and r.relationship_id ='Mapped from' and r.invalid_reason is null
 )
 select *, 'Removed' as action from (
 select * from old_vc_map
@@ -85,7 +85,7 @@ source_concept_id, cs.concept_name as source_concept_name, cs.vocabulary_id as s
 c.concept_id , c.concept_name, c.vocabulary_id, c.concept_code
 from #resolv_dif_sc dif
 join @newVocabSchema.concept cs on cs.concept_id = dif.source_concept_id -- to get source_concept_id info
-left join @oldVocabSchema.concept_relationship cr on cr.concept_id_1 = dif.source_concept_id and cr.relationship_id ='Maps to'
+left join @oldVocabSchema.concept_relationship cr on cr.concept_id_1 = dif.source_concept_id and cr.relationship_id ='Maps to' and cr.invalid_reason is null
 left join @oldVocabSchema.concept c on c.concept_id = cr.concept_id_2
 join @resultSchema.achilles_result_cc arc on arc.concept_id = cs.concept_id 
 --look only at specific vocabularies that used by our data
@@ -96,7 +96,7 @@ create table #newmap as
 with aaa as (select 1 as test)
 select dif.*,c.concept_id , c.concept_name, c.vocabulary_id, c.concept_code
 from #resolv_dif_sc dif
-left join @newVocabSchema.concept_relationship cr on cr.concept_id_1 = dif.source_concept_id and cr.relationship_id ='Maps to'
+left join @newVocabSchema.concept_relationship cr on cr.concept_id_1 = dif.source_concept_id and cr.relationship_id ='Maps to' and cr.invalid_reason is null
 left join @newVocabSchema.concept c on c.concept_id = cr.concept_id_2
 ;
 --3. domain difference
@@ -116,7 +116,7 @@ select * from #new_vc
 join @oldVocabSchema.concept co on co.concept_id =descendant_concept_id
 join @newVocabSchema.concept cn on cn.concept_id =descendant_concept_id
 --get source concepts related to those targets with changed domains
-join @newVocabSchema.concept_relationship cr on cr.relationship_id ='Mapped from' and cr.concept_id_1 = cn.concept_id 
+join @newVocabSchema.concept_relationship cr on cr.relationship_id ='Mapped from' and cr.concept_id_1 = cn.concept_id and cr.invalid_reason is null
 join @newVocabSchema.concept cs on cs.concept_id = cr.concept_id_2
 left join @resultSchema.achilles_result_cc aro on aro.concept_id = cs.concept_id
 where co.domain_id != cn.domain_id
