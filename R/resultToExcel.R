@@ -51,16 +51,16 @@ resultToExcel <-function( connectionDetailsVocab,
   #insert Concepts_in_cohortSet into the SQL database where concepts sets will be resolved
   #for Redshift ask your administrator for a key for bulk load
   DatabaseConnector::insertTable(connection = conn,
-                                 tableName = "#ConceptsInCohortSet",
+                                 tableName = "scratch_ddymshyt.ConceptsInCohortSet",
                                  data = Concepts_in_cohortSet,
                                  dropTableIfExists = TRUE,
                                  createTable = TRUE,
-                                 tempTable = T,
+                                 tempTable = F,
                                  bulkLoad = F)
 
 
   # read SQL from file
- pathToSql <- system.file("sql/sql_server", "AllFromNodes.sql", package = "PhenotypeChangesInVocabUpdate")
+ pathToSql <- "inst/sql/sql_server/AllFromNodes.sql"
  InitSql <- read_file(pathToSql)
 
 
@@ -80,11 +80,11 @@ resultToExcel <-function( connectionDetailsVocab,
   # so this is done in R
   #source concepts resolved and their mapping in the old vocabulary
   oldMap <- DatabaseConnector::renderTranslateQuerySql(connection = conn,
-                                                       "select * from #oldmap", snakeCaseToCamelCase = F)
+                                                       "select * from scratch_ddymshyt.oldmap", snakeCaseToCamelCase = F)
 
   #source concepts resolved and their mapping in the new vocabulary
   newMap <- DatabaseConnector::renderTranslateQuerySql(connection = conn,
-                                                       "select * from #newmap", snakeCaseToCamelCase = F)
+                                                       "select * from scratch_ddymshyt.newmap", snakeCaseToCamelCase = F)
 
   #aggregate the target concepts into one row so we can compare old and new mapping, newMap
   newMapAgg <-
@@ -112,36 +112,35 @@ resultToExcel <-function( connectionDetailsVocab,
       OLD_MAPPED_CONCEPT_CODE = paste(CONCEPT_CODE, collapse = '-')
     )
 
-  #join oldMap and newMap where combination of target concepts are different
+  #join oldMap and newMap to see the difference in source concepts
   mapDif <- oldMapAgg %>%
     inner_join(newMapAgg, by = c("COHORTID", "COHORTNAME", "CONCEPTSETNAME", "CONCEPTSETID", "SOURCE_CONCEPT_ID", "ACTION")) %>%
-    filter(if_else(is.na(OLD_MAPPED_CONCEPT_ID), '', OLD_MAPPED_CONCEPT_ID) != if_else(is.na(NEW_MAPPED_CONCEPT_ID), '', NEW_MAPPED_CONCEPT_ID))%>%
     arrange(desc(RECORD_COUNT))
 
   #get the non-standard concepts used in concept set definitions
-  nonStNodes <- DatabaseConnector::renderTranslateQuerySql(connection = conn,
-                                                           "select * from #non_st_Nodes
-order by drc desc", snakeCaseToCamelCase = T) # to evaluate the best way of naming
+ # nonStNodes <- DatabaseConnector::renderTranslateQuerySql(connection = conn,
+  #                                                         "select * from scratch_ddymshyt.non_st_Nodes
+#order by drc desc", snakeCaseToCamelCase = T) # to evaluate the best way of naming
 
 
   #get the standard concepts changed domains and their mapped counterparts
-  domainChange <-DatabaseConnector::renderTranslateQuerySql(connection = conn,
-                                                            "select * from
-                                           #resolv_dom_dif order by source_concept_record_count desc",  snakeCaseToCamelCase = T)
+#  domainChange <-DatabaseConnector::renderTranslateQuerySql(connection = conn,
+ #                                                           "select * from
+  #                                         scratch_ddymshyt.resolv_dom_dif order by source_concept_record_count desc",  snakeCaseToCamelCase = T)
   #disconnect
   DatabaseConnector::disconnect(conn)
 
   # put the results in excel, each dataframe goes to a separate tab
   wb <- createWorkbook()
 
-  addWorksheet(wb, "nonStNodes")
-  writeData(wb, "nonStNodes", nonStNodes)
+ # addWorksheet(wb, "nonStNodes")
+ # writeData(wb, "nonStNodes", nonStNodes)
 
   addWorksheet(wb, "mapDif")
   writeData(wb, "mapDif", mapDif)
 
-  addWorksheet(wb, "domainChange")
-  writeData(wb, "domainChange", domainChange)
+#  addWorksheet(wb, "domainChange")
+ # writeData(wb, "domainChange", domainChange)
 
   saveWorkbook(wb, "PhenChange.xlsx", overwrite = TRUE)
 }
