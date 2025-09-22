@@ -75,12 +75,13 @@ resultToExcel(connectionDetailsVocab = connectionDetailsVocab,
               oldVocabSchema = oldVocabSchema,
               excludedNodes = excludedVisitNodes,
               resultSchema = resultSchema,
-              includedSourceVocabs = includedSourceVocabs			  
+              includedSourceVocabs = includedSourceVocabs,
+              projName = projName
 )
 
 #open the excel file
 #Windows
-shell.exec("PhenChange.xlsx")
+shell.exec(paste0(projName, "PhenChange.xlsx"))
 
 #MacOS
 #system(paste("open", "PhenChange.xlsx"))
