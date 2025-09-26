@@ -63,6 +63,7 @@ oldVocabSchema <-'v20220909' #schema containing an older vocabulary
 # and store it in the same database as the Vocabulary tables, please specify schema as result schema
 
 resultSchema <-'scratch_ddymshyt' #schema containing Achilles results
+scratcSchema <-'scratch_ddymshyt' #schema for storing temp tables in Azure
 
 #create the dataframe with concept set expressions using the getNodeConcepts function
 Concepts_in_cohortSet<-getNodeConcepts(cohorts, baseUrl)

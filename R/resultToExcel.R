@@ -21,6 +21,7 @@
 #' @param excludedNodes         text string with excluded nodes, for example: "9201, 9202, 9203"; 0 by default
 #' @param includedSourceVocabs  text string with included source vocabularies, for example: "'ICD10CM', 'ICD9CM', 'HCPCS'"; 0 by default, which is treated as ALL vocabularies
 #' @param projName              project name - used to name the output file
+#' @param scratchSchema         used to store temp tables in Databricks
 #' @examples
 #' \dontrun{
 #'  resultToExcel(connectionDetails = YourconnectionDetails,
@@ -32,6 +33,7 @@
 #' @export
 
 
+
 resultToExcel <-function( connectionDetailsVocab,
                           Concepts_in_cohortSet,
                           newVocabSchema,
@@ -39,11 +41,12 @@ resultToExcel <-function( connectionDetailsVocab,
                           resultSchema,
                           excludedNodes = 0,
 						              includedSourceVocabs =0,
-					             	  projName  = '')
+					             	  projName  = '',
+						              scratchSchema = scratchSchema)
 {
   #use databaseConnector to run SQL and extract tables into data frames
 
-
+  options(sqlRenderTempEmulationSchema = scratchSchema)
 
   #connect to the vocabulary server
   conn <- DatabaseConnector::connect(connectionDetailsVocab)
@@ -128,6 +131,19 @@ order by drc desc", snakeCaseToCamelCase = T) # to evaluate the best way of nami
   domainChange <-DatabaseConnector::renderTranslateQuerySql(connection = conn,
                                                             "select * from
                                            #resolv_dom_dif order by source_concept_record_count desc",  snakeCaseToCamelCase = T)
+
+#drop temp tables (which are physical tables in databricks, so need to be deleted)
+  DatabaseConnector::renderTranslateExecuteSql (connection = conn,
+"drop table #conceptsincohortset;
+drop table #new_vc;
+drop table #newmap;
+drop table #non_st_nodes;
+drop table #old_vc;
+drop table #oldmap;
+drop table #resolv_dif_sc;
+drop table #resolv_dom_dif"
+  )
+
   #disconnect
   DatabaseConnector::disconnect(conn)
 
