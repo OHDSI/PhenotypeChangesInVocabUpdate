@@ -189,7 +189,7 @@ order by drc desc", snakeCaseToCamelCase = T) # to evaluate the best way of nami
 
   stats <-DatabaseConnector::renderTranslateQuerySql(connection = conn,
                                                             "select * from
-                                           @scratchSchema.stats ORDER BY same_persons_no_change * 1.0 / total_persons",  snakeCaseToCamelCase = T)
+                                           @scratchSchema.stats ORDER BY same_persons_no_change * 1.0 / total_persons",scratchSchema = scratchSchema,  snakeCaseToCamelCase = T)
 
 
   #drop temp tables (which are physical tables in databricks, so need to be deleted)
