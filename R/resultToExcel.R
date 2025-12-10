@@ -43,7 +43,9 @@ resultToExcel <-function( connectionDetailsVocab,
                           excludedNodes = 0,
                           includedSourceVocabs =0,
                           projName  = '',
-                          scratchSchema = scratchSchema)
+                          scratchSchema = scratchSchema,
+                          cdmSchema= cdmSchema
+                          )
 {
   #use databaseConnector to run SQL and extract tables into data frames
 
