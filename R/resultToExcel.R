@@ -22,6 +22,7 @@
 #' @param includedSourceVocabs  text string with included source vocabularies, for example: "'ICD10CM', 'ICD9CM', 'HCPCS'"; 0 by default, which is treated as ALL vocabularies
 #' @param projName              project name - used to name the output file
 #' @param scratchSchema         used to store temp tables in Databricks
+#' @param cdmSchema             used to store get the statistics, use the dataset of choice
 #' @examples
 #' \dontrun{
 #'  resultToExcel(connectionDetails = YourconnectionDetails,
@@ -154,6 +155,41 @@ order by drc desc", snakeCaseToCamelCase = T) # to evaluate the best way of nami
                                                             "select * from
                                            #resolv_dom_dif order by source_concept_record_count desc",  snakeCaseToCamelCase = T)
 
+  #get stats
+  #############
+  #import cohort_id / cohort_name table
+  DatabaseConnector::insertTable(
+    connection = conn,
+    tableName  = "scratch.scratch_ddymshyt.cohort_id_names",
+    data       = Cohorts,
+    dropTableIfExists = TRUE,   # set FALSE if you want to append
+    createTable      = TRUE,    # creates the table with inferred types
+    tempTable        = FALSE,   # we want a real table, not temp
+    useMppBulkLoad   = FALSE    # keep FALSE for Databricks / Spark
+  )
+
+
+  pathToSqlStats <- system.file("sql/sql_server", "get_stats.sql", package = "PhenotypeChangesInVocabUpdate")
+  StatsSql <- read_file(pathToSqlStats)
+
+
+  #run the SQL getting the statistics
+  DatabaseConnector::renderTranslateExecuteSql (connection = conn,
+                                                StatsSql,
+                                                newVocabSchema=newVocabSchema,
+                                                oldVocabSchema= oldVocabSchema,
+                                                resultSchema = resultSchema,
+                                                excludedNodes = excludedNodes,
+                                                includedSourceVocabs = includedSourceVocabs,
+                                                cdmSchema = cdmSchema,
+                                                scratchSchema = scratchSchema
+  )
+
+  stats <-DatabaseConnector::renderTranslateQuerySql(connection = conn,
+                                                            "select * from
+                                           @scratchSchema.stats ORDER BY same_persons_no_change * 1.0 / total_persons",  snakeCaseToCamelCase = T)
+
+
   #drop temp tables (which are physical tables in databricks, so need to be deleted)
   DatabaseConnector::renderTranslateExecuteSql (connection = conn,
                                                 "drop table #conceptsincohortset;
@@ -163,7 +199,13 @@ drop table #non_st_nodes;
 drop table #old_vc;
 drop table #oldmap;
 drop table #resolv_dif_sc;
-drop table #resolv_dom_dif"
+drop table #resolv_dom_dif;
+DROP TABLE IF EXISTS @scratchSchema.concepts_in_cohorts;
+DROP TABLE IF EXISTS @scratchSchema.concept_diff;
+DROP TABLE IF EXISTS @scratchSchema.concept_count_change;
+DROP TABLE IF EXISTS @scratchSchema.cohort_vocab_change_summary;
+DROP TABLE IF EXISTS @scratchSchema.stats;",
+             scratchSchema = scratchSchema
   )
 
   #disconnect
@@ -180,6 +222,9 @@ drop table #resolv_dom_dif"
 
   addWorksheet(wb, "domainChange")
   writeData(wb, "domainChange", domainChange)
+
+  addWorksheet(wb, "stats")
+  writeData(wb, "stats", stats)
 
   saveWorkbook(wb, paste0(projName, "PhenChange.xlsx"), overwrite = TRUE)
 }
