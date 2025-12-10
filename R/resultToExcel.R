@@ -40,9 +40,9 @@ resultToExcel <-function( connectionDetailsVocab,
                           oldVocabSchema,
                           resultSchema,
                           excludedNodes = 0,
-						              includedSourceVocabs =0,
-					             	  projName  = '',
-						              scratchSchema = scratchSchema)
+                          includedSourceVocabs =0,
+                          projName  = '',
+                          scratchSchema = scratchSchema)
 {
   #use databaseConnector to run SQL and extract tables into data frames
 
@@ -64,8 +64,8 @@ resultToExcel <-function( connectionDetailsVocab,
 
 
   # read SQL from file
- pathToSql <- system.file("sql/sql_server", "AllFromNodes.sql", package = "PhenotypeChangesInVocabUpdate")
- InitSql <- read_file(pathToSql)
+  pathToSql <- system.file("sql/sql_server", "AllFromNodes.sql", package = "PhenotypeChangesInVocabUpdate")
+  InitSql <- read_file(pathToSql)
 
 
   #run the SQL creating all tables needed for the output
@@ -75,7 +75,7 @@ resultToExcel <-function( connectionDetailsVocab,
                                                 oldVocabSchema= oldVocabSchema,
                                                 resultSchema = resultSchema,
                                                 excludedNodes = excludedNodes,
-												includedSourceVocabs = includedSourceVocabs
+                                                includedSourceVocabs = includedSourceVocabs
   )
 
   #get SQL tables into dataframes
@@ -90,36 +90,58 @@ resultToExcel <-function( connectionDetailsVocab,
   newMap <- DatabaseConnector::renderTranslateQuerySql(connection = conn,
                                                        "select * from #newmap", snakeCaseToCamelCase = F)
 
-  #aggregate the target concepts into one row so we can compare old and new mapping, newMap
+  # aggregate the target concepts into one row so we can compare old and new mapping, newMap
+
   newMapAgg <-
+
     newMap %>%
-    arrange(CONCEPT_ID) %>%
-    group_by(COHORTID,COHORTNAME, CONCEPTSETNAME, CONCEPTSETID, SOURCE_CONCEPT_ID, ACTION) %>%
+    arrange(concept_id) %>%
+    group_by(cohortid, cohortName, conceptsetname, conceptsetid, source_concept_id, action) %>%
     summarise(
-      NEW_MAPPED_CONCEPT_ID = paste(CONCEPT_ID, collapse = '-'),
-      NEW_MAPPED_CONCEPT_NAME = paste(CONCEPT_NAME, collapse = '-'),
-      NEW_MAPPED_VOCABULARY_ID = paste(VOCABULARY_ID, collapse = '-'),
-      NEW_MAPPED_CONCEPT_CODE = paste(CONCEPT_CODE, collapse = '-')
+      new_mapped_concept_id     = paste(concept_id, collapse = "-"),
+      new_mapped_concept_name   = paste(concept_name, collapse = "-"),
+      new_mapped_vocabulary_id = paste(vocabulary_id, collapse = "-"),
+      new_mapped_concept_code  = paste(concept_code, collapse = "-"),
+      .groups = "drop"
     )
 
-  #aggregate the target concepts into one row so we can compare old and new mapping, oldMap
+
+  # aggregate the target concepts into one row so we can compare old and new mapping, oldMap
+
   oldMapAgg <-
+
     oldMap %>%
-    arrange(CONCEPT_ID) %>%
-    group_by(COHORTID,COHORTNAME, CONCEPTSETNAME, CONCEPTSETID, SOURCE_CONCEPT_ID, RECORD_COUNT, ACTION,
-             SOURCE_CONCEPT_NAME, SOURCE_VOCABULARY_ID, SOURCE_CONCEPT_CODE
+    arrange(concept_id) %>%
+    group_by(
+      cohortid, cohortName,
+      conceptsetname, conceptsetid,
+      source_concept_id, record_count, action,
+      source_concept_name, source_vocabulary_id, source_concept_code
     ) %>%
     summarise(
-      OLD_MAPPED_CONCEPT_ID = paste(CONCEPT_ID, collapse = '-'),
-      OLD_MAPPED_CONCEPT_NAME = paste(CONCEPT_NAME, collapse = '-'),
-      OLD_MAPPED_VOCABULARY_ID = paste(VOCABULARY_ID, collapse = '-'),
-      OLD_MAPPED_CONCEPT_CODE = paste(CONCEPT_CODE, collapse = '-')
+      old_mapped_concept_id     = paste(concept_id, collapse = "-"),
+      old_mapped_concept_name   = paste(concept_name, collapse = "-"),
+      old_mapped_vocabulary_id = paste(vocabulary_id, collapse = "-"),
+      old_mapped_concept_code  = paste(concept_code, collapse = "-"),
+      .groups = "drop"
     )
 
-  #join oldMap and newMap to see the mappings of added or removed source concepts
+
+  # join oldMap and newMap to see the mappings of added or removed source concepts
+
   mapDif <- oldMapAgg %>%
-    inner_join(newMapAgg, by = c("COHORTID", "COHORTNAME", "CONCEPTSETNAME", "CONCEPTSETID", "SOURCE_CONCEPT_ID", "ACTION")) %>%
-   arrange(desc(RECORD_COUNT))
+    inner_join(
+      newMapAgg,
+      by = c(
+        "cohortid",
+        "cohortName",
+        "conceptsetname",
+        "conceptsetid",
+        "source_concept_id",
+        "action"
+      )
+    ) %>%
+    arrange(desc(record_count))
 
   #get the non-standard concepts used in concept set definitions
   nonStNodes <- DatabaseConnector::renderTranslateQuerySql(connection = conn,
@@ -132,9 +154,9 @@ order by drc desc", snakeCaseToCamelCase = T) # to evaluate the best way of nami
                                                             "select * from
                                            #resolv_dom_dif order by source_concept_record_count desc",  snakeCaseToCamelCase = T)
 
-#drop temp tables (which are physical tables in databricks, so need to be deleted)
+  #drop temp tables (which are physical tables in databricks, so need to be deleted)
   DatabaseConnector::renderTranslateExecuteSql (connection = conn,
-"drop table #conceptsincohortset;
+                                                "drop table #conceptsincohortset;
 drop table #new_vc;
 drop table #newmap;
 drop table #non_st_nodes;
